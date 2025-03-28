@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "962891882061",
+    "project_id": "flutter-snake-game-679f1",
+    "storage_bucket": "flutter-snake-game-679f1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962891882061:android:5f809bbe3fe25f58f2c604",
+        "android_client_info": {
+          "package_name": "com.example.flutter_snake_game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962891882061-00q94kl2qk4b0l0qfm87a0chqv4b3cvv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_snake_game",
+            "certificate_hash": "3a809c278265ae7ee414baf9f58be9564cc3d44e"
+          }
+        },
+        {
+          "client_id": "962891882061-9p3hugs5p4b28hfus8uuevjmp5nuu1hk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqpWNaYeVUDQTbzrhvkwyezfzlW3ugbYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962891882061-9p3hugs5p4b28hfus8uuevjmp5nuu1hk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962891882061:android:a87ba41263ba7887f2c604",
+        "android_client_info": {
+          "package_name": "com.example.snake_game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962891882061-9p3hugs5p4b28hfus8uuevjmp5nuu1hk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqpWNaYeVUDQTbzrhvkwyezfzlW3ugbYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962891882061-9p3hugs5p4b28hfus8uuevjmp5nuu1hk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
