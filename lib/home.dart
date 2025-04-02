@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
+import 'package:snake_game/widget/show_dialog.dart';
 
 import 'main.dart';
 
@@ -72,7 +73,7 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 8),
             ElevatedButton(
-              onPressed: () => (),
+              onPressed: () => ShowAllScore.showAllScore(context),
               child: const Text("View All Score"),
             ),
           ],
