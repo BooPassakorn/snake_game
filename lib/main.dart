@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:snake_game/login.dart';
 
 import 'home.dart';
+import 'level/level_one.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      // home: const LoginPage(),
+      home: const LevelOne(),
     );
   }
 }

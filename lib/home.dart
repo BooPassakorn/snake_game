@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
+import 'package:snake_game/level/level_one.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 
 import 'main.dart';
@@ -68,7 +69,12 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 8),
             ElevatedButton(
-              onPressed: () => (),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LevelOne()), // ไปหน้า GamePage
+                );
+              },
               child: const Text("Start"),
             ),
             SizedBox(height: 8),
