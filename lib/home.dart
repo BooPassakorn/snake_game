@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   void logout(BuildContext context) async {
-    //เรียกใช้ AuthService เพื่อทำการ sign out
+    //เรียกใช้ AuthService เพื่อทำการ logout
     final _auth = AuthService();
     await _auth.signOut();
 
@@ -19,12 +19,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //ดึงข้อมูลของผู้ใช้ท
+    //ดึงข้อมูลของผู้ใช้
     final user = AuthService().getCurrentUser();
 
     return Scaffold(
+      backgroundColor: Colors.lightBlue,
       appBar: AppBar(
-        title: const Text("Home"),
+        backgroundColor: Colors.lightBlue,
         actions: [
           IconButton(
             onPressed: () => logout(context),
@@ -37,6 +38,15 @@ class HomePage extends StatelessWidget {
             ? Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              "Snake Game",
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 8),
             //โชว์รูป Profile
             CircleAvatar(
               radius: 50, //ขนาดรูป
@@ -47,10 +57,24 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 16),
             // แสดงชื่อผู้ใช้
             Text(
-              "Welcome, ${user.displayName}",
+              "${user.displayName}",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
+            Text(
+              "Best Score: ",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () => (),
+              child: const Text("Start"),
+            ),
+            SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () => (),
+              child: const Text("View All Score"),
+            ),
           ],
         )
             : const Text("No user signed in"),
