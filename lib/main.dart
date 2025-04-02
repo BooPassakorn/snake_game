@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:snake_game/login.dart';
 
-import 'auth/auth_service.dart';
 import 'home.dart';
 
 void main() async {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const LoginPage(),
     );
   }
 }
@@ -34,43 +35,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _signInAndNavigate() async {
-    //เรียกใช้ Google Sign in
-    var userCredential = await AuthService().signInWithGoogle();
-
-    if (userCredential != null) {
-      //ไปที่หน้า HomePage เมื่อ sign in ผ่าน
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlue,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Snake Game",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _signInAndNavigate,
-              child: const Text("Google Sign In"),
-            ),
-          ],
-        ),
-      ),
+    return StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return HomePage(); //ถ้า login แล้ว ไปหน้า HomePage
+          } else {
+            return LoginPage(); //ถ้ายังไม่ได้ login ไปหน้า LoginPage
+          }
+        }
     );
+
   }
 }

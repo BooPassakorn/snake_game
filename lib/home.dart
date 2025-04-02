@@ -8,8 +8,8 @@ class HomePage extends StatelessWidget {
 
   void logout(BuildContext context) async {
     //เรียกใช้ AuthService เพื่อทำการ sign out
-    final auth = AuthService();
-    await auth.signOut();
+    final _auth = AuthService();
+    await _auth.signOut();
 
     Navigator.pushReplacement(
       context,
@@ -34,9 +34,28 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: user != null
-            ? Text("Welcome, ${user.displayName}")
+            ? Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //โชว์รูป Profile
+            CircleAvatar(
+              radius: 50, //ขนาดรูป
+              backgroundImage: user.photoURL != null
+                  ? NetworkImage(user.photoURL!) //ดึงรูปจาก Google
+                  : const AssetImage("assets/default_avatar.png") as ImageProvider, //รูป default ถ้าไม่มีรูป
+            ),
+            SizedBox(height: 16),
+            // แสดงชื่อผู้ใช้
+            Text(
+              "Welcome, ${user.displayName}",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+          ],
+        )
             : const Text("No user signed in"),
       ),
     );
   }
+
 }
