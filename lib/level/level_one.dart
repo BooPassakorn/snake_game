@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:snake_game/widget/show_dialog.dart';
 
 class LevelOne extends StatefulWidget {
   const LevelOne({super.key});
@@ -8,6 +10,8 @@ class LevelOne extends StatefulWidget {
   @override
   State<LevelOne> createState() => _LevelOneState();
 }
+
+enum Direction {up, down, left, right}
 
 class _LevelOneState extends State<LevelOne> {
 
@@ -17,6 +21,8 @@ class _LevelOneState extends State<LevelOne> {
   List<int> snakePosition = [];
   int snakeHead = 0;
   int score = 0;
+  late Direction direction;
+  late int foodPosition;
 
   @override
   void initState() {
@@ -25,19 +31,66 @@ class _LevelOneState extends State<LevelOne> {
   }
 
   void startGame() {
+
+    setState(() {
+      score = 0;
+    });
+
     makeBorder();
-    snakePosition = [63,64,65];
+    generateFood();
+    direction = Direction.right;
+    snakePosition = [65,63,64];
     snakeHead = snakePosition.first;
     Timer.periodic(const Duration(milliseconds: 300), (timer){
       updateSnake();
+      if (checkCollision()){
+        timer.cancel();
+        ShowGameOver.showGameOver(context, score, startGame);
+      }
     });
+  }
+
+
+  bool checkCollision() { //ตรวจการชน
+    if (borderList.contains(snakeHead)) return true; //ชนขอบ
+    if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
+    return false;
+  }
+
+  void generateFood() {
+    foodPosition = Random().nextInt(row*column);
+    if(borderList.contains(foodPosition)) {
+      generateFood();
+    }
   }
 
   void updateSnake() {
     setState(() {
-      snakePosition.insert(0, snakeHead + 1);
+
+      switch(direction){
+        case Direction.up:
+          snakePosition.insert(0, snakeHead - column);
+          break;
+        case Direction.down:
+          snakePosition.insert(0, snakeHead + column);
+          break;
+        case Direction.right:
+          snakePosition.insert(0, snakeHead + 1);
+          break;
+        case Direction.left:
+          snakePosition.insert(0, snakeHead - 1);
+          break;
+      }
+      // snakePosition.insert(0, snakeHead + 1);
     });
-    snakePosition.removeLast();
+
+    if (snakeHead == foodPosition) {
+      score++;
+      generateFood();
+    } else {
+      snakePosition.removeLast();
+    }
+
     snakeHead = snakePosition.first;
   }
 
@@ -77,16 +130,24 @@ class _LevelOneState extends State<LevelOne> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_circle_up), iconSize: 80),
+          IconButton(onPressed: (){
+            if(direction!=Direction.down) direction = Direction.up;
+          }, icon: const Icon(Icons.arrow_circle_up), iconSize: 80),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_circle_left_outlined), iconSize: 80),
+              IconButton(onPressed: (){
+                if(direction!=Direction.right) direction = Direction.left;
+              }, icon: const Icon(Icons.arrow_circle_left_outlined), iconSize: 80),
               SizedBox(width: 100),
-              IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_circle_right_outlined), iconSize: 80),
+              IconButton(onPressed: (){
+                if(direction!=Direction.left) direction = Direction.right;
+              }, icon: const Icon(Icons.arrow_circle_right_outlined), iconSize: 80),
             ],
           ),
-          IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_circle_down_outlined), iconSize: 80),
+          IconButton(onPressed: (){
+            if(direction!=Direction.up) direction = Direction.down;
+          }, icon: const Icon(Icons.arrow_circle_down_outlined), iconSize: 80),
         ],
       ),
     );
@@ -97,7 +158,15 @@ class _LevelOneState extends State<LevelOne> {
       return Colors.yellow;
     else{
       if(snakePosition.contains(index)) {
-        return Colors.green;
+        if(snakeHead == index) {
+          return Colors.greenAccent;
+        } else {
+          return Colors.green.shade400;
+        }
+      } else {
+        if (index == foodPosition) {
+          return Colors.red;
+        }
       }
     }
       return Colors.grey.withOpacity(0.05);

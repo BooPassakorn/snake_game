@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: const LoginPage(),
-      home: const LevelOne(),
+      home: const LoginPage(),
+      // home: const LevelOne(),
     );
   }
 }
