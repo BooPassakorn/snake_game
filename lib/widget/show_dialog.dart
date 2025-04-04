@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:snake_game/home.dart';
 
@@ -81,6 +79,38 @@ class ShowGameOver {
               onPressed: () {
                 Navigator.of(context).pop();
                 startGame();
+              },
+              child: const Text("Restart"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class PauseDialog {
+  static void showPauseDialog(BuildContext context, VoidCallback restartGame, VoidCallback resumeGame) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Game Paused", textAlign: TextAlign.center),
+          content: const Text("Do you want to Restart the game?"),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                resumeGame(); // เรียก resume
+              },
+              child: const Text("Go"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                restartGame();
               },
               child: const Text("Restart"),
             ),

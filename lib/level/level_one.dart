@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:snake_game/home.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 
 class LevelOne extends StatefulWidget {
@@ -25,18 +26,26 @@ class _LevelOneState extends State<LevelOne> {
   late int foodPosition;
   Stopwatch stopwatch = Stopwatch();
   Timer? timer;
+  bool isGamePause = false;
+  Timer? snakeTimer;  //สำหรับงู
+  Timer? uiTimer;     //สำหรับแสดงเวลา
+
 
   @override
   void initState() {
     startGame();
+
     super.initState();
   }
 
   void startTimer() {
     stopwatch.reset();
     stopwatch.start();
-    timer = Timer.periodic(Duration(milliseconds: 10), (_) {
-      setState(() {});
+    uiTimer?.cancel();
+    uiTimer = Timer.periodic(Duration(milliseconds: 10), (_) {
+      if (!isGamePause) {
+        setState(() {});  //รีเฟรชเวลา
+      }
     });
   }
 
@@ -44,9 +53,13 @@ class _LevelOneState extends State<LevelOne> {
 
     setState(() {
       score = 0;
+      isGamePause = false;
     });
 
-    timer?.cancel();
+    stopwatch.reset();
+    stopwatch.start();
+
+    uiTimer?.cancel();
     startTimer();
 
     makeBorder();
@@ -54,14 +67,78 @@ class _LevelOneState extends State<LevelOne> {
     direction = Direction.right;
     snakePosition = [65,63,64];
     snakeHead = snakePosition.first;
-    Timer.periodic(const Duration(milliseconds: 300), (timer){
-      updateSnake();
-      if (checkCollision()){
+
+    snakeTimer?.cancel(); //หยุดงู
+    snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      if (isGamePause) {
         timer.cancel();
-        stopwatch.stop();
-        ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
+      } else {
+        updateSnake();
+        if (checkCollision()) {
+          timer.cancel();
+          stopwatch.stop();
+          ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
+        }
       }
     });
+  }
+  //   Timer.periodic(const Duration(milliseconds: 300), (timer){
+  //     if (isGamePause) {
+  //       timer.cancel();
+  //     }else {
+  //       updateSnake();
+  //       if (checkCollision()) {
+  //         timer.cancel();
+  //         stopwatch.stop();
+  //         ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
+  //       }
+  //     }
+  //   });
+  // }
+
+  void pauseGame() {
+    setState(() {
+      isGamePause = true;
+    });
+
+    stopwatch.stop();
+    uiTimer?.cancel();
+    snakeTimer?.cancel();
+
+    PauseDialog.showPauseDialog(context, restartGame, resumeGame);
+  }
+
+
+  void resumeGame() {
+    setState(() {
+      isGamePause = false;
+    });
+
+    stopwatch.start();
+    // startTimer();
+
+    //งูเดินต่อ
+    snakeTimer?.cancel();
+    snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      if (isGamePause) {
+        timer.cancel();
+      } else {
+        updateSnake();
+        if (checkCollision()) {
+          timer.cancel();
+          stopwatch.stop();
+          ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
+        }
+      }
+    });
+  }
+
+  void restartGame() {
+    setState(() {
+      isGamePause = false;
+    });
+    startTimer();
+    startGame();
   }
 
 
@@ -79,6 +156,8 @@ class _LevelOneState extends State<LevelOne> {
   }
 
   void updateSnake() {
+    if (isGamePause) return;
+
     setState(() {
 
       switch(direction){
@@ -130,9 +209,9 @@ class _LevelOneState extends State<LevelOne> {
                 ],
               ),
             ),
-
             Expanded(
                 child: _buildGameView()),
+                       _buildPause(),
                        _buildGameControls()
           ],
         ),
@@ -156,7 +235,7 @@ class _LevelOneState extends State<LevelOne> {
 
   Widget _buildGameControls() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -196,6 +275,16 @@ class _LevelOneState extends State<LevelOne> {
 
     return Text("Time : ${formatTime(stopwatch.elapsed)}",
     style: TextStyle(),);
+  }
+  
+  Widget _buildPause() {
+    return Align(
+      alignment: Alignment(-0.95, 0),
+      child: ElevatedButton(
+          onPressed: () {
+            pauseGame();
+          }, child: Text("Pause")),
+    );
   }
 
   Color fillBoxColor(int index) {
