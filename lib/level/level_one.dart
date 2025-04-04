@@ -38,10 +38,14 @@ class _LevelOneState extends State<LevelOne> {
     super.initState();
   }
 
-  void startTimer() {
-    stopwatch.reset();
-    stopwatch.start();
+  void startTimer({bool resetStopwatch = true}) { //ถ้าได้(Restart) true จะรีเซ็ตเวลา, ได้(Go) false จะไม่รีเซ็ตเวลา
+
+    if (resetStopwatch) {
+      stopwatch.reset();
+      stopwatch.start();
+    }
     uiTimer?.cancel();
+
     uiTimer = Timer.periodic(Duration(milliseconds: 10), (_) {
       if (!isGamePause) {
         setState(() {});  //รีเฟรชเวลา
@@ -105,17 +109,17 @@ class _LevelOneState extends State<LevelOne> {
     uiTimer?.cancel();
     snakeTimer?.cancel();
 
-    PauseDialog.showPauseDialog(context, restartGame, resumeGame);
+    PauseDialog.showPauseDialog(context, restartGame, playContinueGame);
   }
 
 
-  void resumeGame() {
+  void playContinueGame() {
     setState(() {
       isGamePause = false;
     });
 
     stopwatch.start();
-    // startTimer();
+    startTimer(resetStopwatch: false);
 
     //งูเดินต่อ
     snakeTimer?.cancel();
@@ -140,7 +144,6 @@ class _LevelOneState extends State<LevelOne> {
     startTimer();
     startGame();
   }
-
 
   bool checkCollision() { //ตรวจการชน
     if (borderList.contains(snakeHead)) return true; //ชนขอบ
