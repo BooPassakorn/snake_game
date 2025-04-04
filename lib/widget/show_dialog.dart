@@ -90,7 +90,7 @@ class ShowGameOver {
 }
 
 class PauseDialog {
-  static void showPauseDialog(BuildContext context, VoidCallback restartGame, VoidCallback resumeGame) {
+  static void showPauseDialog(BuildContext context, VoidCallback restartGame, VoidCallback playContinueGame) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -103,7 +103,7 @@ class PauseDialog {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                resumeGame(); // เรียก resume
+                playContinueGame(); // เรียก resume
               },
               child: const Text("Go"),
             ),
@@ -117,6 +117,55 @@ class PauseDialog {
           ],
         );
       },
+    );
+  }
+}
+
+class LevelPass {
+  static void showLevelPassDialog(BuildContext context, Duration duration, VoidCallback restartGame) {
+
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Level : ", style: TextStyle(fontSize: 18)),
+                const SizedBox(height: 10),
+                Text("You Passed", style: const TextStyle(fontSize: 18)),
+                const SizedBox(height: 10),
+                Text("Time : $minutes:$seconds:$milliseconds", style: const TextStyle(fontSize: 18)),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                },
+                child: const Text("Next Level"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  restartGame();
+                },
+                child: const Text("Restart"),
+              ),
+            ],
+          );
+        }
     );
   }
 }

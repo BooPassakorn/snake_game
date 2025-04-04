@@ -34,7 +34,6 @@ class _LevelOneState extends State<LevelOne> {
   @override
   void initState() {
     startGame();
-
     super.initState();
   }
 
@@ -183,6 +182,12 @@ class _LevelOneState extends State<LevelOne> {
     if (snakeHead == foodPosition) {
       score++;
       generateFood();
+
+      if (score == 2){
+        stopwatch.stop();
+        isGamePause = true;
+        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame);
+      }
     } else {
       snakePosition.removeLast();
     }
