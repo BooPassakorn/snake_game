@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:snake_game/home.dart';
 
@@ -35,7 +37,12 @@ class ShowAllScore {
 }
 
 class ShowGameOver {
-  static void showGameOver(BuildContext context, int score, VoidCallback startGame) {
+  static void showGameOver(BuildContext context, int score, Duration duration, VoidCallback startGame) {
+    //แปลงเวลาเป็น mm:ss
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -54,7 +61,7 @@ class ShowGameOver {
               const SizedBox(height: 10),
               Text("Score : $score", style: const TextStyle(fontSize: 18)),
               const SizedBox(height: 10),
-              Text("Time : ", style: const TextStyle(fontSize: 18)),
+              Text("Time : $minutes:$seconds", style: const TextStyle(fontSize: 18)),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,

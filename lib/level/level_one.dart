@@ -23,6 +23,8 @@ class _LevelOneState extends State<LevelOne> {
   int score = 0;
   late Direction direction;
   late int foodPosition;
+  Duration duration = Duration();
+  Timer? timer;
 
   @override
   void initState() {
@@ -30,11 +32,29 @@ class _LevelOneState extends State<LevelOne> {
     super.initState();
   }
 
+  void addTime() {
+    final addSeconds = 1;
+
+    setState(() {
+      final seconds = duration.inSeconds + addSeconds;
+
+      duration = Duration(seconds: seconds);
+    });
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
+  }
+
   void startGame() {
 
     setState(() {
       score = 0;
+      duration = Duration();
     });
+
+    timer?.cancel();
+    startTimer();
 
     makeBorder();
     generateFood();
@@ -45,15 +65,18 @@ class _LevelOneState extends State<LevelOne> {
       updateSnake();
       if (checkCollision()){
         timer.cancel();
-        ShowGameOver.showGameOver(context, score, startGame);
+        ShowGameOver.showGameOver(context, score, duration, startGame);
       }
     });
   }
 
 
   bool checkCollision() { //ตรวจการชน
-    if (borderList.contains(snakeHead)) return true; //ชนขอบ
-    if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
+                          //ชนขอบ                                           ชนตัว
+    if (borderList.contains(snakeHead) || snakePosition.sublist(1).contains(snakeHead)) {
+      timer?.cancel();
+      return true;
+    }
     return false;
   }
 
@@ -91,7 +114,7 @@ class _LevelOneState extends State<LevelOne> {
       snakePosition.removeLast();
     }
 
-    snakeHead = snakePosition.first;
+    snakeHead = snakePosition.first; //
   }
 
   @override
@@ -101,8 +124,25 @@ class _LevelOneState extends State<LevelOne> {
         backgroundColor: Colors.blueGrey,
         body: Column(
           children: [
-            Text("Score : $score"),
-            Expanded(child: _buildGameView()), _buildGameControls()
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      Text("Level : 1"),
+                      Text("Score : $score"),
+                    ],
+                  ),
+                  _buildTime(),
+                ],
+              ),
+            ),
+
+            Expanded(
+                child: _buildGameView()),
+                       _buildGameControls()
           ],
         ),
       ),
@@ -151,6 +191,15 @@ class _LevelOneState extends State<LevelOne> {
         ],
       ),
     );
+  }
+
+  Widget _buildTime() {
+    String twoDigits(int n) => n.toString().padLeft(2,'0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return Text("Time : "'$minutes:$seconds',
+    style: TextStyle(),);
   }
 
   Color fillBoxColor(int index) {
