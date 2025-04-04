@@ -38,10 +38,12 @@ class ShowAllScore {
 
 class ShowGameOver {
   static void showGameOver(BuildContext context, int score, Duration duration, VoidCallback startGame) {
-    //แปลงเวลาเป็น mm:ss
+    //แปลงเวลาเป็น mm:ss:SS
     String twoDigits(int n) => n.toString().padLeft(2, '0');
+
     String minutes = twoDigits(duration.inMinutes.remainder(60));
     String seconds = twoDigits(duration.inSeconds.remainder(60));
+    String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
 
     showDialog(
       context: context,
@@ -61,7 +63,7 @@ class ShowGameOver {
               const SizedBox(height: 10),
               Text("Score : $score", style: const TextStyle(fontSize: 18)),
               const SizedBox(height: 10),
-              Text("Time : $minutes:$seconds", style: const TextStyle(fontSize: 18)),
+              Text("Time : $minutes:$seconds:$milliseconds", style: const TextStyle(fontSize: 18)),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,

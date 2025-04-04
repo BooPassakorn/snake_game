@@ -23,7 +23,7 @@ class _LevelOneState extends State<LevelOne> {
   int score = 0;
   late Direction direction;
   late int foodPosition;
-  Duration duration = Duration();
+  Stopwatch stopwatch = Stopwatch();
   Timer? timer;
 
   @override
@@ -32,25 +32,18 @@ class _LevelOneState extends State<LevelOne> {
     super.initState();
   }
 
-  void addTime() {
-    final addSeconds = 1;
-
-    setState(() {
-      final seconds = duration.inSeconds + addSeconds;
-
-      duration = Duration(seconds: seconds);
-    });
-  }
-
   void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
+    stopwatch.reset();
+    stopwatch.start();
+    timer = Timer.periodic(Duration(milliseconds: 10), (_) {
+      setState(() {});
+    });
   }
 
   void startGame() {
 
     setState(() {
       score = 0;
-      duration = Duration();
     });
 
     timer?.cancel();
@@ -65,18 +58,16 @@ class _LevelOneState extends State<LevelOne> {
       updateSnake();
       if (checkCollision()){
         timer.cancel();
-        ShowGameOver.showGameOver(context, score, duration, startGame);
+        stopwatch.stop();
+        ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
       }
     });
   }
 
 
   bool checkCollision() { //ตรวจการชน
-                          //ชนขอบ                                           ชนตัว
-    if (borderList.contains(snakeHead) || snakePosition.sublist(1).contains(snakeHead)) {
-      timer?.cancel();
-      return true;
-    }
+    if (borderList.contains(snakeHead)) return true; //ชนขอบ
+    if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
     return false;
   }
 
@@ -194,11 +185,16 @@ class _LevelOneState extends State<LevelOne> {
   }
 
   Widget _buildTime() {
-    String twoDigits(int n) => n.toString().padLeft(2,'0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    String formatTime(Duration duration) {
+      String twoDigits(int n) => n.toString().padLeft(2, '0');
 
-    return Text("Time : "'$minutes:$seconds',
+      String minutes = twoDigits(duration.inMinutes.remainder(60));
+      String seconds = twoDigits(duration.inSeconds.remainder(60));
+      String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
+      return "$minutes:$seconds:$milliseconds";
+    }
+
+    return Text("Time : ${formatTime(stopwatch.elapsed)}",
     style: TextStyle(),);
   }
 
