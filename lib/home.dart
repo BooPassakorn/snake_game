@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
 import 'package:snake_game/level/level_one.dart';
@@ -5,8 +6,14 @@ import 'package:snake_game/widget/show_dialog.dart';
 
 import 'main.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
 
   void logout(BuildContext context) async {
     //เรียกใช้ AuthService เพื่อทำการ logout
@@ -17,6 +24,39 @@ class HomePage extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (context) => const MyHomePage()),
     );
+  }
+
+  int? bestScore;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBestScore(); //ดึงคะแนนเมื่อโหลดหน้าจอ
+  }
+
+  Future<void> fetchBestScore() async {
+    final user = AuthService().getCurrentUser();
+    if (user == null) return;
+
+    final uid = user.uid;
+
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('play_history')
+          .where('uid', isEqualTo: uid) //ค้นหา uid
+          .orderBy('score', descending: true) //เรียงจากมากไปน้อย
+          .limit(1) //เอาแค่ 1 อันดับแรกที่เจอ
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final score = querySnapshot.docs.first.data()['score'];
+        setState(() {
+          bestScore = score;
+        });
+      }
+    } catch (e) {
+      print("เกิดข้อผิดพลาดในการดึงคะแนน: $e");
+    }
   }
 
   @override
@@ -64,7 +104,7 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              "Best Score: ",
+              "Best Score: ${bestScore != null ? bestScore.toString() : "0"}",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
@@ -72,7 +112,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LevelOne()), // ไปหน้า GamePage
+                  MaterialPageRoute(builder: (context) => const LevelOne()),
                 );
               },
               child: const Text("Start"),
@@ -88,5 +128,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
 }

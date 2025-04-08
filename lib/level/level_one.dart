@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:snake_game/home.dart';
 import 'package:snake_game/widget/show_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class LevelOne extends StatefulWidget {
   const LevelOne({super.key});
@@ -15,6 +17,8 @@ class LevelOne extends StatefulWidget {
 enum Direction {up, down, left, right}
 
 class _LevelOneState extends State<LevelOne> {
+
+  final String uid = FirebaseAuth.instance.currentUser!.uid;
 
   int row = 20;
   int column = 20;
@@ -29,7 +33,7 @@ class _LevelOneState extends State<LevelOne> {
   bool isGamePause = false;
   Timer? snakeTimer;  //สำหรับงู
   Timer? uiTimer;     //สำหรับแสดงเวลา
-
+  bool hasSavedResult = false;
 
   @override
   void initState() {
@@ -73,7 +77,7 @@ class _LevelOneState extends State<LevelOne> {
     snakeHead = snakePosition.first;
 
     snakeTimer?.cancel(); //หยุดงู
-    snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+    snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
       if (isGamePause) {
         timer.cancel();
       } else {
@@ -81,7 +85,11 @@ class _LevelOneState extends State<LevelOne> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
+          if (!hasSavedResult) {
+            hasSavedResult = true;
+            await savePlayResult(score, stopwatch.elapsed, 1);
+            ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
+          }
         }
       }
     });
@@ -112,7 +120,6 @@ class _LevelOneState extends State<LevelOne> {
     PauseDialog.showPauseDialog(context, restartGame, playContinueGame);
   }
 
-
   void playContinueGame() {
     setState(() {
       isGamePause = false;
@@ -140,6 +147,7 @@ class _LevelOneState extends State<LevelOne> {
   void restartGame() {
     setState(() {
       isGamePause = false;
+      hasSavedResult = false;
     });
     startTimer();
     startGame();
@@ -158,7 +166,7 @@ class _LevelOneState extends State<LevelOne> {
     }
   }
 
-  void updateSnake() {
+  Future<void> updateSnake() async {
     if (isGamePause) return;
 
     setState(() {
@@ -184,9 +192,11 @@ class _LevelOneState extends State<LevelOne> {
       score++;
       generateFood();
 
-      if (score == 10){
+      if (score == 10 && !hasSavedResult){
+        hasSavedResult = true;
         stopwatch.stop();
         isGamePause = true;
+        await savePlayResult(score, stopwatch.elapsed, 1);
         LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame);
       }
     } else {
@@ -272,16 +282,16 @@ class _LevelOneState extends State<LevelOne> {
     );
   }
 
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
+    return "$minutes:$seconds:$milliseconds";
+  }
+
   Widget _buildTime() {
-    String formatTime(Duration duration) {
-      String twoDigits(int n) => n.toString().padLeft(2, '0');
-
-      String minutes = twoDigits(duration.inMinutes.remainder(60));
-      String seconds = twoDigits(duration.inSeconds.remainder(60));
-      String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
-      return "$minutes:$seconds:$milliseconds";
-    }
-
     return Text("Time : ${formatTime(stopwatch.elapsed)}",
     style: TextStyle(),);
   }
@@ -329,4 +339,23 @@ class _LevelOneState extends State<LevelOne> {
       if(!borderList.contains(i)) borderList.add(i);
     }
   }
+
+  Future<void> savePlayResult(int score, Duration time, int level) async {
+    try {
+      final String uid = FirebaseAuth.instance.currentUser!.uid;
+      final String formattedTime = formatTime(time);
+
+      await FirebaseFirestore.instance.collection('play_history').add({
+        'uid': uid,
+        'time': formattedTime,
+        'score': score,
+        'levelreach': level,
+        'created_at': Timestamp.now(),
+      });
+      print("บันทึกข้อมูลสำเร็จ");
+    } catch (e) {
+      print("บันทึกข้อมูลไม่สำเร็จ: $e");
+    }
+  }
+
 }

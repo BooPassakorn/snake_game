@@ -1,11 +1,57 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:snake_game/auth/auth_service.dart';
 import 'package:snake_game/home.dart';
 
 class ShowAllScore {
-  static void showAllScore(BuildContext context) {
+  static void showAllScore(BuildContext context) async {
+    final user = AuthService().getCurrentUser();
+    if (user == null) return;
+
+    final uid = user.uid; //ดึง uid
+
+    try {
+      //ดึงข้อมูล score ทั้งหมดของ user โดยเรียงจากมากไปน้อย
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('play_history')
+          .where('uid', isEqualTo: uid)
+          .orderBy('score', descending: true) //คะแนนมากไปน้อย
+          .get();
+
+      if (querySnapshot.docs.isEmpty) { //ถ้าไม่มีข้อมูล
+        _showDialog(context, 0, "00:00:00", 1);
+        return;
+      }
+
+      //หา score ที่มากที่สุดก่อน
+      final highestScore = querySnapshot.docs.first.data()['score']; //ถูกเรียงลำดับไปแล้วจากมากไปน้อย
+
+      //กรองเฉพาะที่ score เท่ากับ highestScore
+      final bestScoreDocs = querySnapshot.docs
+          .where((doc) => doc.data()['score'] == highestScore)
+          .toList();
+
+      //หาเวลา ที่น้อยที่สุดจากกลุ่มคะแนน
+      bestScoreDocs.sort((a, b) {
+        final timeA = _parseDuration(a.data()['time']);
+        final timeB = _parseDuration(b.data()['time']);
+        return timeA.compareTo(timeB);
+      });
+
+      final bestDoc = bestScoreDocs.first; //คะแนนดีที่สุด
+      final bestTime = bestDoc.data()['time']; //เวลาน้อยที่สุด
+      final bestLevel = bestDoc.data()['levelreach'];
+
+      _showDialog(context, highestScore, bestTime, bestLevel);
+    } catch (e) {
+      print("เกิดข้อผิดพลาด: $e");
+    }
+  }
+
+  static void _showDialog(BuildContext context, int score, String time, int level) {
     showDialog(
       context: context,
-      barrierDismissible: false, //ทำให้ไม่สามารถกดรอบๆ ที่ไม่ใช่ dialog ได้
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.grey.shade300,
@@ -13,11 +59,11 @@ class ShowAllScore {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 10),
-              Text("Best Score : 0", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text("Best Score : $score", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
-              Text("Best Time : 00:00:00", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text("Best Time : $time", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
-              Text("Best Level : 1", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text("Best Level : $level", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -33,7 +79,17 @@ class ShowAllScore {
       },
     );
   }
+
+  static Duration _parseDuration(String timeString) {
+    final parts = timeString.split(':');
+    if (parts.length != 3) return Duration.zero;
+    final minutes = int.tryParse(parts[0]) ?? 0;
+    final seconds = int.tryParse(parts[1]) ?? 0;
+    final milliseconds = int.tryParse(parts[2]) ?? 0;
+    return Duration(minutes: minutes, seconds: seconds, milliseconds: milliseconds * 10);
+  }
 }
+
 
 class ShowGameOver {
   static void showGameOver(BuildContext context, int score, Duration duration, VoidCallback startGame) {
