@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'auth/auth_service.dart';
@@ -17,11 +18,27 @@ class _LoginPageState extends State<LoginPage> {
     var userCredential = await AuthService().signInWithGoogle();
 
     if (userCredential != null) {
-      //ไปที่หน้า HomePage เมื่อ sign in ผ่าน
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+      var user = userCredential.user;
+
+      if (user != null) {
+        final usersRef = FirebaseFirestore.instance.collection('users');
+
+        final doc = await usersRef.doc(user.uid).get();
+
+        if (!doc.exists) {
+          await usersRef.doc(user.uid).set({
+            'uid': user.uid,
+            'email': user.email,
+            'displayName': user.displayName,
+          });
+        }
+
+        //ไปที่หน้า HomePage เมื่อ sign in ผ่าน
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
     }
   }
 

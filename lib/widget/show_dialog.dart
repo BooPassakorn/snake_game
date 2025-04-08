@@ -5,6 +5,7 @@ class ShowAllScore {
   static void showAllScore(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false, //ทำให้ไม่สามารถกดรอบๆ ที่ไม่ใช่ dialog ได้
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.grey.shade300,

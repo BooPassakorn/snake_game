@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:snake_game/login.dart';
 
 import 'home.dart';
-import 'level/level_one.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

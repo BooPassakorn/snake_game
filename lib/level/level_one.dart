@@ -16,8 +16,8 @@ enum Direction {up, down, left, right}
 
 class _LevelOneState extends State<LevelOne> {
 
-  int row = 30;
-  int column = 30;
+  int row = 20;
+  int column = 20;
   List<int> borderList = [];
   List<int> snakePosition = [];
   int snakeHead = 0;
@@ -68,7 +68,8 @@ class _LevelOneState extends State<LevelOne> {
     makeBorder();
     generateFood();
     direction = Direction.right;
-    snakePosition = [65,63,64];
+    // snakePosition = [65,63,64];
+    snakePosition = [46,45,44];
     snakeHead = snakePosition.first;
 
     snakeTimer?.cancel(); //หยุดงู
@@ -183,7 +184,7 @@ class _LevelOneState extends State<LevelOne> {
       score++;
       generateFood();
 
-      if (score == 2){
+      if (score == 10){
         stopwatch.stop();
         isGamePause = true;
         LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame);
