@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
@@ -11,11 +13,9 @@ class ShowAllScore {
     final uid = user.uid; //ดึง uid
 
     try {
-      //ดึงข้อมูล score ทั้งหมดของ user โดยเรียงจากมากไปน้อย
       final querySnapshot = await FirebaseFirestore.instance
           .collection('play_history')
-          .where('uid', isEqualTo: uid)
-          .orderBy('score', descending: true) //คะแนนมากไปน้อย
+          .where('uid', isEqualTo: uid)  //เทียบ uid ที่ตรงกับผู้ใช้ปัจจุบัน
           .get();
 
       if (querySnapshot.docs.isEmpty) { //ถ้าไม่มีข้อมูล
@@ -23,24 +23,34 @@ class ShowAllScore {
         return;
       }
 
-      //หา score ที่มากที่สุดก่อน
-      final highestScore = querySnapshot.docs.first.data()['score']; //ถูกเรียงลำดับไปแล้วจากมากไปน้อย
+      final allLevels = querySnapshot.docs //ดึงทุก level ที่เคยถึง
+        .map((doc) => doc.data()['levelreach'] as int)
+        .toList();
 
-      //กรองเฉพาะที่ score เท่ากับ highestScore
-      final bestScoreDocs = querySnapshot.docs
+      final bestLevel = allLevels.reduce(max); //หา level ที่มากที่สุด
+
+      //คัด Level ที่ดีที่สุด
+      final bestLevelDocs = querySnapshot.docs
+          .where((doc) => doc.data()['levelreach'] == bestLevel)
+          .toList();
+
+      //หา Score สูงสุดใน Level นี้ เรียงจากมากไปน้อย
+      bestLevelDocs.sort((a, b) => (b.data()['score'] as int).compareTo(a.data()['score'] as int));
+      final highestScore = bestLevelDocs.first.data()['score']; //ใช้ Score อันแรก
+
+      //คัด score สูงสุดใน level นี้
+      final topScoreDocs = bestLevelDocs
           .where((doc) => doc.data()['score'] == highestScore)
           .toList();
 
-      //หาเวลา ที่น้อยที่สุดจากกลุ่มคะแนน
-      bestScoreDocs.sort((a, b) {
+      //หาเวลาน้อยสุดจากคะแนนสูงสุด
+      topScoreDocs.sort((a, b) {
         final timeA = _parseDuration(a.data()['time']);
         final timeB = _parseDuration(b.data()['time']);
         return timeA.compareTo(timeB);
       });
 
-      final bestDoc = bestScoreDocs.first; //คะแนนดีที่สุด
-      final bestTime = bestDoc.data()['time']; //เวลาน้อยที่สุด
-      final bestLevel = bestDoc.data()['levelreach'];
+      final bestTime = topScoreDocs.first.data()['time'];
 
       _showDialog(context, highestScore, bestTime, bestLevel);
     } catch (e) {
@@ -179,7 +189,7 @@ class PauseDialog {
 }
 
 class LevelPass {
-  static void showLevelPassDialog(BuildContext context, Duration duration, VoidCallback restartGame) {
+  static void showLevelPassDialog(BuildContext context, Duration duration, VoidCallback restartGame, int level, VoidCallback goNextLevel) {
 
     String twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -195,7 +205,7 @@ class LevelPass {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text("Level : ", style: TextStyle(fontSize: 18)),
+                Text("Level : $level", style: TextStyle(fontSize: 18)),
                 const SizedBox(height: 10),
                 Text("You Passed", style: const TextStyle(fontSize: 18)),
                 const SizedBox(height: 10),
@@ -206,10 +216,8 @@ class LevelPass {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                  Navigator.of(context).pop();
+                  goNextLevel();  //เรียกฟังก์ชันเพื่อไป Level ต่อไป
                 },
                 child: const Text("Next Level"),
               ),

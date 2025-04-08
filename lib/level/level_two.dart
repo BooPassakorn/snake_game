@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'Level_three.dart';
 
 class LevelTwo extends StatefulWidget {
   const LevelTwo({super.key});
@@ -34,6 +35,7 @@ class _LevelTwoState extends State<LevelTwo> {
   Timer? snakeTimer;  //สำหรับงู
   Timer? uiTimer;     //สำหรับแสดงเวลา
   bool hasSavedResult = false;
+  List<int> obstacles = []; //สิ่งกีดขวาง
 
   @override
   void initState() {
@@ -70,10 +72,11 @@ class _LevelTwoState extends State<LevelTwo> {
     startTimer();
 
     makeBorder();
+    Obstacles();
     generateFood();
     direction = Direction.right;
     // snakePosition = [65,63,64];
-    snakePosition = [46,45,44];
+    snakePosition = [166,165,164];
     snakeHead = snakePosition.first;
 
     snakeTimer?.cancel(); //หยุดงู
@@ -87,7 +90,7 @@ class _LevelTwoState extends State<LevelTwo> {
           stopwatch.stop();
           if (!hasSavedResult) {
             hasSavedResult = true;
-            await savePlayResult(score, stopwatch.elapsed, 1);
+            await savePlayResult(score, stopwatch.elapsed, 2);
             ShowGameOver.showGameOver(context, score, stopwatch.elapsed, startGame);
           }
         }
@@ -135,6 +138,7 @@ class _LevelTwoState extends State<LevelTwo> {
     setState(() {
       isGamePause = false;
       hasSavedResult = false;
+      Obstacles();
     });
     startTimer();
     startGame();
@@ -143,15 +147,19 @@ class _LevelTwoState extends State<LevelTwo> {
   bool checkCollision() { //ตรวจการชน
     if (borderList.contains(snakeHead)) return true; //ชนขอบ
     if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
+    if (obstacles.contains(snakeHead)) return true; //ชนสิ่งกีดขวาง
     return false;
   }
 
   void generateFood() {
-    foodPosition = Random().nextInt(row*column);
-    if(borderList.contains(foodPosition)) {
-      generateFood();
-    }
+    int newFoodPos;
+    do {
+      newFoodPos = Random().nextInt(row * column);
+    } while (borderList.contains(newFoodPos) || obstacles.contains(newFoodPos));
+
+    foodPosition = newFoodPos;
   }
+
 
   Future<void> updateSnake() async {
     if (isGamePause) return;
@@ -179,18 +187,32 @@ class _LevelTwoState extends State<LevelTwo> {
       score++;
       generateFood();
 
-      if (score == 15 && !hasSavedResult){
+      if (score == 3 && !hasSavedResult){
         hasSavedResult = true;
         stopwatch.stop();
         isGamePause = true;
-        await savePlayResult(score, stopwatch.elapsed, 1);
-        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame);
+        await savePlayResult(score, stopwatch.elapsed, 2);
+        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, 2, goNextLevel);
       }
     } else {
       snakePosition.removeLast();
     }
 
     snakeHead = snakePosition.first; //
+  }
+
+  void goNextLevel() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LevelThree()), // <-- เปลี่ยนเป็นหน้า Level 3
+    );
+  }
+
+  void Obstacles() {
+    obstacles = [63, 64, 65, 83, 103,
+                74, 75, 76, 96, 116,
+                283, 303, 323, 324, 325,
+                334, 335, 296, 316, 336];  //กำหนดตำแหน่งสิ่งกีดขวางคงที่
   }
 
   @override
@@ -294,20 +316,18 @@ class _LevelTwoState extends State<LevelTwo> {
   }
 
   Color fillBoxColor(int index) {
-    if(borderList.contains(index))
-      return Colors.yellow;
-    else{
-      if(snakePosition.contains(index)) {
-        if(snakeHead == index) {
-          return Colors.greenAccent;
-        } else {
-          return Colors.green.shade400;
-        }
+    if (borderList.contains(index)) {
+      return Colors.yellow;  //ขอบ
+    } else if (snakePosition.contains(index)) {
+      if (snakeHead == index) {
+        return Colors.greenAccent; //หัวงู
       } else {
-        if (index == foodPosition) {
-          return Colors.red;
-        }
+        return Colors.green.shade400; //ตัวงู
       }
+    } else if (index == foodPosition) {
+      return Colors.red; //อาหาร
+    } else if (obstacles.contains(index)) {
+      return Colors.brown; //สิ่งกีดขวาง
     }
     return Colors.grey.withOpacity(0.05);
   }

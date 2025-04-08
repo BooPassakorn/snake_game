@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:snake_game/level/level_two.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 class LevelOne extends StatefulWidget {
   const LevelOne({super.key});
@@ -192,18 +192,25 @@ class _LevelOneState extends State<LevelOne> {
       score++;
       generateFood();
 
-      if (score == 10 && !hasSavedResult){
+      if (score == 2 && !hasSavedResult){
         hasSavedResult = true;
         stopwatch.stop();
         isGamePause = true;
         await savePlayResult(score, stopwatch.elapsed, 1);
-        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame);
+        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, 1, goNextLevel);
       }
     } else {
       snakePosition.removeLast();
     }
 
     snakeHead = snakePosition.first; //
+  }
+
+  void goNextLevel() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LevelTwo()), // <-- เปลี่ยนเป็นหน้า Level 3
+    );
   }
 
   @override

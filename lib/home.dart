@@ -4,6 +4,8 @@ import 'package:snake_game/auth/auth_service.dart';
 import 'package:snake_game/level/level_one.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 
+import 'level/Level_three.dart';
+import 'level/level_two.dart';
 import 'main.dart';
 
 class HomePage extends StatefulWidget {
@@ -112,7 +114,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LevelOne()),
+                  MaterialPageRoute(builder: (context) => const LevelThree()),
                 );
               },
               child: const Text("Start"),
