@@ -55,28 +55,22 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Image(image: AssetImage('assets/SnakeLogo.png'), height: 150, width: 150,),
+              const Image(image: AssetImage('assets/SnakeLogo.png'), height: 200, width: 200,),
               // const Icon(
               //   Icons.videogame_asset,
               //   size: 100,
               //   color: Colors.white70,
               // ),
               const SizedBox(height: 20),
-              Text(
-                "Snake Game",
-                style: TextStyle(
-                  fontFamily: "BungeeSpice",
-                  fontSize: 40,
-                  letterSpacing: 1.2,
-                ),
+              Text("Snake Game",
+                style: TextStyle(fontFamily: "BungeeSpice", fontSize: 40, letterSpacing: 1.2)
               ),
               const SizedBox(height: 40),
               ElevatedButton.icon(
                 onPressed: _signInAndNavigate,
                 icon: const FaIcon(FontAwesomeIcons.google, color: Colors.white),
-                label: const Text(
-                  "Sign in with Google",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Anton"),
+                label: const Text("Sign in with Google",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Silkscreen")
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,

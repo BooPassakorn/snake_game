@@ -69,10 +69,10 @@ class _HomePageState extends State<HomePage> {
     final user = AuthService().getCurrentUser();
 
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.lightBlue.shade100,
       appBar: AppBar(
         automaticallyImplyLeading: false, //ซ่อนปุ่มย้อนกลับ
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.lightBlue.shade100,
         actions: [
           IconButton(
             onPressed: () => logout(context),
@@ -85,18 +85,15 @@ class _HomePageState extends State<HomePage> {
             ? Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Image(image: AssetImage('assets/SnakeLogo.png'), height: 150, width: 150,),
             Text(
               "Snake Game",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.deepOrange, fontFamily: "BungeeSpice"),
             ),
             SizedBox(height: 8),
             //โชว์รูป Profile
             CircleAvatar(
-              radius: 50, //ขนาดรูป
+              radius: 70, //ขนาดรูป
               backgroundImage: user.photoURL != null
                   ? NetworkImage(user.photoURL!) //ดึงรูปจาก Google
                   : const AssetImage("assets/default_avatar.png") as ImageProvider, //รูป default ถ้าไม่มีรูป
@@ -105,31 +102,55 @@ class _HomePageState extends State<HomePage> {
             // แสดงชื่อผู้ใช้
             Text(
               "${user.displayName}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
             ),
             SizedBox(height: 8),
             Text(
               "Best Score: ${bestScore != null ? bestScore.toString() : "0"}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
             ),
             SizedBox(height: 8),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const LevelOne()),
                 );
               },
-              child: const Text("Start"),
+              icon: const Icon(Icons.play_arrow, color: Colors.white),
+              label: const Text("Start",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade600,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 4,
+              ),
             ),
             SizedBox(height: 8),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => ShowAllScore.showAllScore(context),
-              child: const Text("View All Score"),
+              icon: const Icon(Icons.leaderboard, color: Colors.white),
+              label: const Text(
+                "View All Score",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade700,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 4,
+              ),
             ),
           ],
         )
-            : const Text("No user signed in"),
+            : const Text(
+          "No user signed in",
+          style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: "Silkscreen"),
+        ),
       ),
     );
   }
