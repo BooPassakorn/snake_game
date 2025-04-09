@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'auth/auth_service.dart';
 import 'home.dart';
@@ -47,25 +48,47 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.lightBlue.shade100,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Snake Game",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Image(image: AssetImage('assets/SnakeLogo.png'), height: 150, width: 150,),
+              // const Icon(
+              //   Icons.videogame_asset,
+              //   size: 100,
+              //   color: Colors.white70,
+              // ),
+              const SizedBox(height: 20),
+              Text(
+                "Snake Game",
+                style: TextStyle(
+                  fontFamily: "BungeeSpice",
+                  fontSize: 40,
+                  letterSpacing: 1.2,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _signInAndNavigate,
-              child: const Text("Google Sign In"),
-            ),
-          ],
+              const SizedBox(height: 40),
+              ElevatedButton.icon(
+                onPressed: _signInAndNavigate,
+                icon: const FaIcon(FontAwesomeIcons.google, color: Colors.white),
+                label: const Text(
+                  "Sign in with Google",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Anton"),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 5,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
