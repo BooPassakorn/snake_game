@@ -7,16 +7,16 @@ import 'package:snake_game/home.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LevelFour extends StatefulWidget {
-  const LevelFour({super.key});
+class LevelFive extends StatefulWidget {
+  const LevelFive({super.key});
 
   @override
-  State<LevelFour> createState() => _LevelFourState();
+  State<LevelFive> createState() => _LevelFiveState();
 }
 
 enum Direction {up, down, left, right}
 
-class _LevelFourState extends State<LevelFour> {
+class _LevelFiveState extends State<LevelFive> {
 
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -75,7 +75,7 @@ class _LevelFourState extends State<LevelFour> {
     generateFood();
     direction = Direction.right;
     // snakePosition = [65,63,64];
-    snakePosition = [285,284,283];
+    snakePosition = [365,364,363];
     snakeHead = snakePosition.first;
 
     snakeTimer?.cancel(); //หยุดงู
@@ -89,8 +89,8 @@ class _LevelFourState extends State<LevelFour> {
           stopwatch.stop();
           if (!hasSavedResult) {
             hasSavedResult = true;
-            await savePlayResult(score, stopwatch.elapsed, 4);
-            ShowGameOver.showGameOver(context, 4, score, stopwatch.elapsed, startGame);
+            await savePlayResult(score, stopwatch.elapsed, 5);
+            ShowGameOver.showGameOver(context, 5, score, stopwatch.elapsed, startGame);
           }
         }
       }
@@ -127,7 +127,7 @@ class _LevelFourState extends State<LevelFour> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, 4, score, stopwatch.elapsed, startGame);
+          ShowGameOver.showGameOver(context, 5, score, stopwatch.elapsed, startGame);
         }
       }
     });
@@ -186,12 +186,12 @@ class _LevelFourState extends State<LevelFour> {
       score++;
       generateFood();
 
-      if (score == 17 && !hasSavedResult){
+      if (score == 20 && !hasSavedResult){
         hasSavedResult = true;
         stopwatch.stop();
         isGamePause = true;
-        await savePlayResult(score, stopwatch.elapsed, 4);
-        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, 4 , goNextLevel);
+        await savePlayResult(score, stopwatch.elapsed, 5);
+        LevelCongratulation.showLevelCongratulationDialog(context);
       }
     } else {
       snakePosition.removeLast();
@@ -208,12 +208,15 @@ class _LevelFourState extends State<LevelFour> {
   }
 
   void Obstacles() {
-    obstacles = [43, 44, 45, 46, 47, 48,
-      51, 71, 91, 111, 131, 151, 152, 153, 154, 155, 156,
-      148, 147, 146, 145, 144, 143, 168, 188, 208, 228, 248,
-      192, 193, 194, 195, 196,
-      231, 251, 271,
-      308, 328, 348, 307, 306, 305, 304, 303, 309, 310, 311, 312, 313];  //กำหนดตำแหน่งสิ่งกีดขวางคงที่
+    obstacles = [
+      350, 330, 310, 290, 270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50,
+      349, 329, 309, 289, 269, 249, 229, 209, 189, 169, 149, 129, 109, 89, 69, 49,
+      91, 92, 93, 94, 95, 96, 89, 88, 87, 86, 85, 84, 83,
+      151, 152, 153, 154, 155, 156, 149, 148, 147, 146, 145, 144, 143,
+      211, 212, 213, 214, 215, 216, 209, 208, 207, 206, 205, 204, 203,
+      271, 272, 273, 274, 275, 276, 269, 268, 267, 266, 265, 264, 263,
+      331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323
+    ];  //กำหนดตำแหน่งสิ่งกีดขวางคงที่
   }
 
   @override
@@ -230,7 +233,7 @@ class _LevelFourState extends State<LevelFour> {
                 children: [
                   Column(
                     children: [
-                      Text("Level : 4"),
+                      Text("Level : 5"),
                       Text("Score : $score"),
                     ],
                   ),

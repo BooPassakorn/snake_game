@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
 import 'package:snake_game/home.dart';
+import 'package:snake_game/level/level_one.dart';
 
 class ShowAllScore {
   static void showAllScore(BuildContext context) async {
@@ -231,6 +232,42 @@ class LevelPass {
             ],
           );
         }
+    );
+  }
+}
+
+class LevelCongratulation {
+  static void showLevelCongratulationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Congratulation", textAlign: TextAlign.center),
+          // content: const Text("Do you want to Restart the game?"),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+              },
+              child: const Text("Home"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LevelOne()),
+                );
+              },
+              child: const Text("Play again"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
