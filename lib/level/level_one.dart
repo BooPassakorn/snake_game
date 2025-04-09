@@ -217,7 +217,7 @@ class _LevelOneState extends State<LevelOne> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.lightBlue.shade100,
         body: Column(
           children: [
             Padding(
@@ -227,8 +227,18 @@ class _LevelOneState extends State<LevelOne> {
                 children: [
                   Column(
                     children: [
-                      Text("Level : 1"),
-                      Text("Score : $score"),
+                      Text("🧩 Level: 1",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Silkscreen',
+                            color: Colors.white,
+                          )),
+                      Text("🏆 Score: $score",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Silkscreen',
+                            color: Colors.white,
+                          )),
                     ],
                   ),
                   _buildTime(),
@@ -268,22 +278,22 @@ class _LevelOneState extends State<LevelOne> {
         children: [
           IconButton(onPressed: (){
             if(direction!=Direction.down) direction = Direction.up;
-          }, icon: const Icon(Icons.arrow_circle_up), iconSize: 80),
+          }, icon: const Icon(Icons.arrow_circle_up), iconSize: 80, color: Colors.green),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: (){
                 if(direction!=Direction.right) direction = Direction.left;
-              }, icon: const Icon(Icons.arrow_circle_left_outlined), iconSize: 80),
+              }, icon: const Icon(Icons.arrow_circle_left_outlined), iconSize: 80, color: Colors.green),
               SizedBox(width: 100),
               IconButton(onPressed: (){
                 if(direction!=Direction.left) direction = Direction.right;
-              }, icon: const Icon(Icons.arrow_circle_right_outlined), iconSize: 80),
+              }, icon: const Icon(Icons.arrow_circle_right_outlined), iconSize: 80, color: Colors.green),
             ],
           ),
           IconButton(onPressed: (){
             if(direction!=Direction.up) direction = Direction.down;
-          }, icon: const Icon(Icons.arrow_circle_down_outlined), iconSize: 80),
+          }, icon: const Icon(Icons.arrow_circle_down_outlined), iconSize: 80, color: Colors.green),
         ],
       ),
     );
@@ -299,37 +309,52 @@ class _LevelOneState extends State<LevelOne> {
   }
 
   Widget _buildTime() {
-    return Text("Time : ${formatTime(stopwatch.elapsed)}",
-    style: TextStyle(),);
+    return Text(
+      "⏱ Time: ${formatTime(stopwatch.elapsed)}",
+      style: const TextStyle(
+        fontSize: 16,
+        fontFamily: 'Silkscreen',
+        color: Colors.white,
+      ),
+    );
   }
-  
+
   Widget _buildPause() {
     return Align(
-      alignment: Alignment(-0.95, 0),
-      child: ElevatedButton(
-          onPressed: () {
-            pauseGame();
-          }, child: Text("Pause")),
+      alignment: const Alignment(-0.95, 0),
+      child: ElevatedButton.icon(
+        onPressed: pauseGame,
+        icon: const Icon(Icons.pause_circle),
+        label: const Text("Pause"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepOrange,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+        ),
+      ),
     );
   }
 
   Color fillBoxColor(int index) {
     if(borderList.contains(index))
-      return Colors.yellow;
+      return Colors.yellowAccent;
     else{
       if(snakePosition.contains(index)) {
         if(snakeHead == index) {
-          return Colors.greenAccent;
+          return Colors.green.shade800;
         } else {
           return Colors.green.shade400;
         }
       } else {
         if (index == foodPosition) {
-          return Colors.red;
+          return Colors.redAccent;
         }
       }
     }
-      return Colors.grey.withOpacity(0.05);
+    return Colors.grey.withOpacity(0.3);
   }
 
   makeBorder() {
