@@ -132,8 +132,8 @@ class ShowAllScore {
 
 
 class ShowGameOver {
-  static void showGameOver(BuildContext context, int level, int score, Duration duration, VoidCallback startGame) {
-    //แปลงเวลาเป็น mm:ss:SS
+  static void showGameOver(BuildContext context, int level, int score, Duration duration, VoidCallback restartGame) {
+
     String twoDigits(int n) => n.toString().padLeft(2, '0');
 
     String minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -145,39 +145,59 @@ class ShowGameOver {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           title: const Center(
-            child: Text(
-              "Game Over",
-              textAlign: TextAlign.center,
+            child: Text("💀 Game Over!",
+              style: TextStyle(fontSize: 24, fontFamily: "Silkscreen", fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Level : $level", style: TextStyle(fontSize: 18)),
+              Text("Level : $level",
+                  style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
+                  )),
               const SizedBox(height: 10),
-              Text("Score : $score", style: const TextStyle(fontSize: 18)),
+              Text("Score : $score",
+                  style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
+                  )),
               const SizedBox(height: 10),
-              Text("Time : $minutes:$seconds:$milliseconds", style: const TextStyle(fontSize: 18)),
+              Text("Time : $minutes:$seconds:$milliseconds",
+                  style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
+                  )),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orangeAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => const HomePage()),
                 );
               },
-              child: const Text("Home"),
+              child: const Text("Home",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+              ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
-                startGame();
+                restartGame();
               },
-              child: const Text("Restart"),
+              child: const Text("Restart",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+              ),
             ),
           ],
         );
@@ -185,6 +205,7 @@ class ShowGameOver {
     );
   }
 }
+
 
 class PauseDialog {
   static void showPauseDialog(BuildContext context, VoidCallback restartGame, VoidCallback playContinueGame) {

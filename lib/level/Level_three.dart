@@ -90,7 +90,7 @@ class _LevelThreeState extends State<LevelThree> {
           if (!hasSavedResult) {
             hasSavedResult = true;
             await savePlayResult(score, stopwatch.elapsed, 3);
-            ShowGameOver.showGameOver(context, 3, score, stopwatch.elapsed, startGame);
+            ShowGameOver.showGameOver(context, 3, score, stopwatch.elapsed, restartGame);
           }
         }
       }
@@ -127,7 +127,7 @@ class _LevelThreeState extends State<LevelThree> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, 3, score, stopwatch.elapsed, startGame);
+          ShowGameOver.showGameOver(context, 3, score, stopwatch.elapsed, restartGame);
         }
       }
     });

@@ -90,7 +90,7 @@ class _LevelFiveState extends State<LevelFive> {
           if (!hasSavedResult) {
             hasSavedResult = true;
             await savePlayResult(score, stopwatch.elapsed, 5);
-            ShowGameOver.showGameOver(context, 5, score, stopwatch.elapsed, startGame);
+            ShowGameOver.showGameOver(context, 5, score, stopwatch.elapsed, restartGame);
           }
         }
       }
@@ -127,7 +127,7 @@ class _LevelFiveState extends State<LevelFive> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, 5, score, stopwatch.elapsed, startGame);
+          ShowGameOver.showGameOver(context, 5, score, stopwatch.elapsed, restartGame);
         }
       }
     });

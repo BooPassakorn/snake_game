@@ -88,7 +88,7 @@ class _LevelOneState extends State<LevelOne> {
           if (!hasSavedResult) {
             hasSavedResult = true;
             await savePlayResult(score, stopwatch.elapsed, 1);
-            ShowGameOver.showGameOver(context, 1, score, stopwatch.elapsed, startGame);
+            ShowGameOver.showGameOver(context, 1, score, stopwatch.elapsed, restartGame);
           }
         }
       }
@@ -138,7 +138,7 @@ class _LevelOneState extends State<LevelOne> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, 1, score, stopwatch.elapsed, startGame);
+          ShowGameOver.showGameOver(context, 1, score, stopwatch.elapsed, restartGame);
         }
       }
     });

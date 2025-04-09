@@ -90,7 +90,7 @@ class _LevelFourState extends State<LevelFour> {
           if (!hasSavedResult) {
             hasSavedResult = true;
             await savePlayResult(score, stopwatch.elapsed, 4);
-            ShowGameOver.showGameOver(context, 4, score, stopwatch.elapsed, startGame);
+            ShowGameOver.showGameOver(context, 4, score, stopwatch.elapsed, restartGame);
           }
         }
       }
@@ -127,7 +127,7 @@ class _LevelFourState extends State<LevelFour> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, 4, score, stopwatch.elapsed, startGame);
+          ShowGameOver.showGameOver(context, 4, score, stopwatch.elapsed, restartGame);
         }
       }
     });
