@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.lightBlue,
       appBar: AppBar(
+        automaticallyImplyLeading: false, //ซ่อนปุ่มย้อนกลับ
         backgroundColor: Colors.lightBlue,
         actions: [
           IconButton(

@@ -102,7 +102,7 @@ class ShowAllScore {
 
 
 class ShowGameOver {
-  static void showGameOver(BuildContext context, int score, Duration duration, VoidCallback startGame) {
+  static void showGameOver(BuildContext context, int level, int score, Duration duration, VoidCallback startGame) {
     //แปลงเวลาเป็น mm:ss:SS
     String twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -124,7 +124,7 @@ class ShowGameOver {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Level : ", style: TextStyle(fontSize: 18)),
+              Text("Level : $level", style: TextStyle(fontSize: 18)),
               const SizedBox(height: 10),
               Text("Score : $score", style: const TextStyle(fontSize: 18)),
               const SizedBox(height: 10),

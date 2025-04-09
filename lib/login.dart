@@ -33,6 +33,8 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
 
+        if (!mounted) return; //หน้ายังทำงานอยู่ไหม ป้องกันการพัง ถ้า widget หายไปแล้ว
+
         //ไปที่หน้า HomePage เมื่อ sign in ผ่าน
         Navigator.pushReplacement(
           context,

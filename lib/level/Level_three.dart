@@ -3,21 +3,20 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:snake_game/home.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'Level_three.dart';
-
-class LevelTwo extends StatefulWidget {
-  const LevelTwo({super.key});
+class LevelThree extends StatefulWidget {
+  const LevelThree({super.key});
 
   @override
-  State<LevelTwo> createState() => _LevelTwoState();
+  State<LevelThree> createState() => _LevelThreeState();
 }
 
 enum Direction {up, down, left, right}
 
-class _LevelTwoState extends State<LevelTwo> {
+class _LevelThreeState extends State<LevelThree> {
 
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -90,8 +89,8 @@ class _LevelTwoState extends State<LevelTwo> {
           stopwatch.stop();
           if (!hasSavedResult) {
             hasSavedResult = true;
-            await savePlayResult(score, stopwatch.elapsed, 2);
-            ShowGameOver.showGameOver(context, 2, score, stopwatch.elapsed, startGame);
+            await savePlayResult(score, stopwatch.elapsed, 3);
+            ShowGameOver.showGameOver(context, 3, score, stopwatch.elapsed, startGame);
           }
         }
       }
@@ -128,7 +127,7 @@ class _LevelTwoState extends State<LevelTwo> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, 2, score, stopwatch.elapsed, startGame);
+          ShowGameOver.showGameOver(context, 3, score, stopwatch.elapsed, startGame);
         }
       }
     });
@@ -187,12 +186,12 @@ class _LevelTwoState extends State<LevelTwo> {
       score++;
       generateFood();
 
-      if (score == 12 && !hasSavedResult){
+      if (score == 15 && !hasSavedResult){
         hasSavedResult = true;
         stopwatch.stop();
         isGamePause = true;
-        await savePlayResult(score, stopwatch.elapsed, 2);
-        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, 2, goNextLevel);
+        await savePlayResult(score, stopwatch.elapsed, 3);
+        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, 3 , goNextLevel);
       }
     } else {
       snakePosition.removeLast();
@@ -204,15 +203,17 @@ class _LevelTwoState extends State<LevelTwo> {
   void goNextLevel() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LevelThree()), // <-- เปลี่ยนเป็นหน้า Level 3
+      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 
   void Obstacles() {
     obstacles = [63, 64, 65, 83, 103,
-                74, 75, 76, 96, 116,
-                283, 303, 323, 324, 325,
-                334, 335, 296, 316, 336];  //กำหนดตำแหน่งสิ่งกีดขวางคงที่
+      74, 75, 76, 96, 116,
+      283, 303, 323, 324, 325,
+      334, 335, 296, 316, 336,
+      170, 150, 190, 210, 230, 250,
+      191, 192, 193, 189, 188, 187];  //กำหนดตำแหน่งสิ่งกีดขวางคงที่
   }
 
   @override
@@ -229,7 +230,7 @@ class _LevelTwoState extends State<LevelTwo> {
                 children: [
                   Column(
                     children: [
-                      Text("Level : 2"),
+                      Text("Level : 3"),
                       Text("Score : $score"),
                     ],
                   ),
