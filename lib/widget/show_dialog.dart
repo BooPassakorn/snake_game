@@ -271,42 +271,73 @@ class LevelPass {
     String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
 
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("Level : $level", style: TextStyle(fontSize: 18)),
-                const SizedBox(height: 10),
-                Text("You Passed", style: const TextStyle(fontSize: 18)),
-                const SizedBox(height: 10),
-                Text("Time : $minutes:$seconds:$milliseconds", style: const TextStyle(fontSize: 18)),
-              ],
-            ),
-            actionsAlignment: MainAxisAlignment.center,
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  goNextLevel();  //เรียกฟังก์ชันเพื่อไป Level ต่อไป
-                },
-                child: const Text("Next Level"),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          title: const Center(
+            child: Text(
+              "🎉 Level Cleared!",
+              style: TextStyle(
+                fontFamily: "Silkscreen",
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  restartGame();
-                },
-                child: const Text("Restart"),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Level : $level",
+                style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen"),
+              ),
+              const SizedBox(height: 10),
+              const Text("You Passed!",
+                style: TextStyle(fontSize: 20, color: Colors.deepPurple, fontFamily: "Silkscreen"),
+              ),
+              const SizedBox(height: 10),
+              Text("Time : $minutes:$seconds:$milliseconds",
+                style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen"),
               ),
             ],
-          );
-        }
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightBlueAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                goNextLevel();
+              },
+              child: const Text("Next Level",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 15, color: Colors.black),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orangeAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                restartGame();
+              },
+              child: const Text("Restart",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 15, color: Colors.black),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
+
 
 class LevelCongratulation {
   static void showLevelCongratulationDialog(BuildContext context) {
@@ -315,27 +346,52 @@ class LevelCongratulation {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Congratulation", textAlign: TextAlign.center),
-          // content: const Text("Do you want to Restart the game?"),
+          backgroundColor: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50),
+          ),
+          title: const Center(
+            child: Text("🎊 Congratulations!",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: "Silkscreen", fontSize: 20, fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          content: const Text(
+            "You completed all levels!",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontFamily: "Silkscreen", fontSize: 18, color: Colors.black),
+          ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrangeAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomePage()),
                 );
               },
-              child: const Text("Home"),
+              child: const Text("Home",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+              ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orangeAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LevelOne()),
+                  MaterialPageRoute(builder: (context) => const LevelOne()),
                 );
               },
-              child: const Text("Play again"),
+              child: const Text("Play Again",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+              ),
             ),
           ],
         );
