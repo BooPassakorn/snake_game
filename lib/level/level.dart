@@ -250,15 +250,19 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     switch (direction) {
       case Direction.up:
         newHead = snakeHead - column;
+        if (widget.levelNumber == 1 && newHead < 0) newHead = snakeHead + (row - 1) * column; //ทะลุบน ไป ล่าง
         break;
       case Direction.down:
         newHead = snakeHead + column;
+        if (widget.levelNumber == 1 && newHead >= row * column) newHead = snakeHead % column; //ทะลุล่าง ไป บน
         break;
       case Direction.right:
         newHead = snakeHead + 1;
+        if (widget.levelNumber == 1 && snakeHead % column == column -1) newHead = snakeHead - (column - 1); //ทะลุขวา ไป ซ้าย
         break;
       case Direction.left:
         newHead = snakeHead - 1;
+        if (widget.levelNumber == 1 && snakeHead % column == 0) newHead = snakeHead + (column - 1); //ทะลุซ้าย ไป ขวา
         break;
     }
 
