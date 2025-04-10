@@ -90,7 +90,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323],
       hasBorderCollision: true,
       nextLevel: null, //ไม่มี Level ต่อไป
-      requiredScore: 2,
+      requiredScore: 1,
       initialSnakePosition: [365,364,363],
     ),
   };
@@ -250,7 +250,12 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         stopwatch.stop();
         isGamePause = true;
         await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
-        LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, widget.levelNumber, () => goNextLevel(config));
+
+        if (widget.levelNumber == 5) {
+          LevelCongratulation.showLevelCongratulationDialog(context);
+        } else {
+          LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, widget.levelNumber, () => goNextLevel(config));
+        }
       }
     } else {
       snakePosition.removeLast();

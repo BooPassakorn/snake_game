@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
 import 'package:snake_game/home.dart';
-import 'package:snake_game/level/level_one.dart';
+import 'package:snake_game/level/level.dart';
 
 class ShowAllScore {
   static void showAllScore(BuildContext context) async {
@@ -206,7 +206,6 @@ class ShowGameOver {
   }
 }
 
-
 class PauseDialog {
   static void showPauseDialog(BuildContext context, VoidCallback restartGame, VoidCallback playContinueGame) {
     showDialog(
@@ -227,31 +226,55 @@ class PauseDialog {
           ),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                playContinueGame(); // Resume
-              },
-              child: const Text("Go",
-                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrangeAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                },
+                child: const Text("Home",
+                  style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+                ),
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                restartGame(); // Restart
-              },
-              child: const Text("Restart",
-                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
-              ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    playContinueGame(); // Resume
+                  },
+                  child: const Text("Go",
+                    style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+                  ),
+                ),
+                SizedBox(width: 10), // ช่องว่างระหว่างปุ่ม
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    restartGame(); // Restart
+                  },
+                  child: const Text("Restart",
+                    style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -259,7 +282,6 @@ class PauseDialog {
     );
   }
 }
-
 
 class LevelPass {
   static void showLevelPassDialog(BuildContext context, Duration duration, VoidCallback restartGame, int level, VoidCallback goNextLevel) {
@@ -338,9 +360,8 @@ class LevelPass {
   }
 }
 
-
 class LevelCongratulation {
-  static void showLevelCongratulationDialog(BuildContext context) {
+  static void  (BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -386,7 +407,7 @@ class LevelCongratulation {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const LevelOne()),
+                  MaterialPageRoute(builder: (context) => const SnakeGameLevel(levelNumber: 1)),
                 );
               },
               child: const Text("Play Again",
