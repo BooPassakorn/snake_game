@@ -88,14 +88,26 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 8),
             //โชว์รูป Profile
-            CircleAvatar(
-              radius: 75, //ขนาดวงกลม
-              backgroundColor: Colors.black54,
-              child: CircleAvatar(
-                radius: 70, //ขนาดรูป
-                backgroundImage: user.photoURL != null
-                    ? NetworkImage(user.photoURL!) //ดึงรูปจาก Google
-                    : const AssetImage("assets/default_avatar.png") as ImageProvider //รูป default ถ้าไม่มีรูป
+            Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(//add colors to colors array
+                  colors: [
+                    Colors.red,
+                    Colors.yellow,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(4.0),
+                child: CircleAvatar(
+                  radius: 70, //ขนาดรูป
+                  backgroundImage: user.photoURL != null
+                      ? NetworkImage(user.photoURL!) //ดึงรูปจาก Google
+                      : const AssetImage("assets/default_avatar.png") as ImageProvider //รูป default ถ้าไม่มีรูป
+                ),
               ),
             ),
             SizedBox(height: 16),
