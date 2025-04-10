@@ -361,7 +361,7 @@ class LevelPass {
 }
 
 class LevelCongratulation {
-  static void  (BuildContext context) {
+  static void showLevelCongratulationDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
