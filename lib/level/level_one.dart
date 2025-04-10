@@ -209,7 +209,7 @@ class _LevelOneState extends State<LevelOne> {
   void goNextLevel() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LevelTwo()), // <-- เปลี่ยนเป็นหน้า Level 3
+      MaterialPageRoute(builder: (context) => LevelTwo()), // <-- เปลี่ยนเป็นหน้า Level 2
     );
   }
 

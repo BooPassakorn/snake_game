@@ -5,6 +5,7 @@ import 'package:snake_game/level/level_one.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 
 import 'level/Level_three.dart';
+import 'level/level.dart';
 import 'level/level_five.dart';
 import 'level/level_four.dart';
 import 'level/level_two.dart';
@@ -114,7 +115,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LevelOne()),
+                  MaterialPageRoute(builder: (context) => const SnakeGameLevel(levelNumber: 1,)),
                 );
               },
               icon: const Icon(Icons.play_arrow, color: Colors.white),
