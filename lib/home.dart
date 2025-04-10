@@ -89,10 +89,14 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 8),
             //โชว์รูป Profile
             CircleAvatar(
-              radius: 70, //ขนาดรูป
-              backgroundImage: user.photoURL != null
-                  ? NetworkImage(user.photoURL!) //ดึงรูปจาก Google
-                  : const AssetImage("assets/default_avatar.png") as ImageProvider, //รูป default ถ้าไม่มีรูป
+              radius: 75, //ขนาดวงกลม
+              backgroundColor: Colors.black54,
+              child: CircleAvatar(
+                radius: 70, //ขนาดรูป
+                backgroundImage: user.photoURL != null
+                    ? NetworkImage(user.photoURL!) //ดึงรูปจาก Google
+                    : const AssetImage("assets/default_avatar.png") as ImageProvider //รูป default ถ้าไม่มีรูป
+              ),
             ),
             SizedBox(height: 16),
             //แสดงชื่อผู้ใช้

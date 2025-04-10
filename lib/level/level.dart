@@ -42,13 +42,13 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     1: LevelConfig(
       obstacles: [],
       nextLevel: 2,
-      requiredScore: 1,
+      requiredScore: 5,
       initialSnakePosition: [166, 165, 164],
     ),
     2: LevelConfig(
       obstacles: [],
       nextLevel: 3,
-      requiredScore: 1,
+      requiredScore: 10,
       initialSnakePosition: [166, 165, 164],
     ),
     3: LevelConfig(
@@ -57,7 +57,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         283, 303, 323, 324, 325,
         334, 335, 296, 316, 336],
       nextLevel: 4,
-      requiredScore: 1,
+      requiredScore: 12,
       initialSnakePosition: [166, 165, 164],
     ),
     4: LevelConfig(
@@ -68,7 +68,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         170, 150, 190, 210, 230, 250,
         191, 192, 193, 189, 188, 187],
       nextLevel: 5,
-      requiredScore: 1,
+      requiredScore: 15,
       initialSnakePosition: [166, 165, 164],
     ),
     5: LevelConfig(
@@ -79,7 +79,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         231, 251, 271,
         308, 328, 348, 307, 306, 305, 304, 303, 309, 310, 311, 312, 313],
       nextLevel: 6,
-      requiredScore: 1,
+      requiredScore: 17,
       initialSnakePosition: [285,284,283],
     ),
     6: LevelConfig(
@@ -91,7 +91,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         271, 272, 273, 274, 275, 276, 269, 268, 267, 266, 265, 264, 263,
         331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323],
       nextLevel: null, //ไม่มี Level ต่อไป
-      requiredScore: 1,
+      requiredScore: 20,
       initialSnakePosition: [365,364,363],
     ),
   };
