@@ -1,14 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:snake_game/auth/auth_service.dart';
-import 'package:snake_game/level/level_one.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 
-import 'level/Level_three.dart';
 import 'level/level.dart';
-import 'level/level_five.dart';
-import 'level/level_four.dart';
-import 'level/level_two.dart';
 import 'main.dart';
 
 class HomePage extends StatefulWidget {
@@ -100,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                   : const AssetImage("assets/default_avatar.png") as ImageProvider, //รูป default ถ้าไม่มีรูป
             ),
             SizedBox(height: 16),
-            // แสดงชื่อผู้ใช้
+            //แสดงชื่อผู้ใช้
             Text(
               "${user.displayName}",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
@@ -131,21 +126,21 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () => ShowAllScore.showAllScore(context),
-              icon: const Icon(Icons.leaderboard, color: Colors.white),
-              label: const Text(
-                "View All Score",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade700,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            if (bestScore != null)
+              ElevatedButton.icon(
+                onPressed: () => ShowAllScore.showAllScore(context),
+                icon: const Icon(Icons.leaderboard, color: Colors.white),
+                label: const Text("View All Score",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
                 ),
-                elevation: 4,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                ),
               ),
-            ),
           ],
         )
             : const Text(
