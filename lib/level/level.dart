@@ -41,17 +41,12 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
   final Map<int, LevelConfig> levelConfigs = {
     1: LevelConfig(
       obstacles: [],
-      hasBorderCollision: false,
       nextLevel: 2,
       requiredScore: 1,
       initialSnakePosition: [166, 165, 164],
     ),
     2: LevelConfig(
-      obstacles: [63, 64, 65, 83, 103,
-        74, 75, 76, 96, 116,
-        283, 303, 323, 324, 325,
-        334, 335, 296, 316, 336],
-      hasBorderCollision: false,
+      obstacles: [],
       nextLevel: 3,
       requiredScore: 1,
       initialSnakePosition: [166, 165, 164],
@@ -60,27 +55,34 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
       obstacles: [63, 64, 65, 83, 103,
         74, 75, 76, 96, 116,
         283, 303, 323, 324, 325,
-        334, 335, 296, 316, 336,
-        170, 150, 190, 210, 230, 250,
-        191, 192, 193, 189, 188, 187],
-      hasBorderCollision: false,
+        334, 335, 296, 316, 336],
       nextLevel: 4,
       requiredScore: 1,
       initialSnakePosition: [166, 165, 164],
     ),
     4: LevelConfig(
+      obstacles: [63, 64, 65, 83, 103,
+        74, 75, 76, 96, 116,
+        283, 303, 323, 324, 325,
+        334, 335, 296, 316, 336,
+        170, 150, 190, 210, 230, 250,
+        191, 192, 193, 189, 188, 187],
+      nextLevel: 5,
+      requiredScore: 1,
+      initialSnakePosition: [166, 165, 164],
+    ),
+    5: LevelConfig(
       obstacles: [43, 44, 45, 46, 47, 48,
         51, 71, 91, 111, 131, 151, 152, 153, 154, 155, 156,
         148, 147, 146, 145, 144, 143, 168, 188, 208, 228, 248,
         192, 193, 194, 195, 196,
         231, 251, 271,
         308, 328, 348, 307, 306, 305, 304, 303, 309, 310, 311, 312, 313],
-      hasBorderCollision: true,
-      nextLevel: 5,
+      nextLevel: 6,
       requiredScore: 1,
       initialSnakePosition: [285,284,283],
     ),
-    5: LevelConfig(
+    6: LevelConfig(
       obstacles: [350, 330, 310, 290, 270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50,
         349, 329, 309, 289, 269, 249, 229, 209, 189, 169, 149, 129, 109, 89, 69, 49,
         91, 92, 93, 94, 95, 96, 89, 88, 87, 86, 85, 84, 83,
@@ -88,7 +90,6 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         211, 212, 213, 214, 215, 216, 209, 208, 207, 206, 205, 204, 203,
         271, 272, 273, 274, 275, 276, 269, 268, 267, 266, 265, 264, 263,
         331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323],
-      hasBorderCollision: true,
       nextLevel: null, //ไม่มี Level ต่อไป
       requiredScore: 1,
       initialSnakePosition: [365,364,363],
@@ -137,7 +138,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     snakePosition = List.from(config.initialSnakePosition);
     snakeHead = snakePosition.first;
 
-    levelSnakePositions[widget.levelNumber] = List.from(snakePosition);
+    levelSnakePositions[widget.levelNumber] = List.from(snakePosition); //บันทึกตำแหน่งงูที่ level นี้
 
     snakeTimer?.cancel();
     snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
@@ -205,10 +206,14 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
   }
 
   bool checkCollision() { //ตรวจการชน
-    final config = levelConfigs[widget.levelNumber]!;
-    if (borderList.contains(snakeHead)) return true; //ชนขอบ
-    if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
-    if (obstacles.contains(snakeHead)) return true; //ชนสิ่งกีดขวาง
+    //ให้ Level 1 สามารถทะลุขอบได้
+    if (widget.levelNumber == 1) {
+      if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
+    } else {
+      if (borderList.contains(snakeHead)) return true; //ชนขอบ
+      if (snakePosition.sublist(1).contains(snakeHead)) return true; //ชนตัวเอง
+      if (obstacles.contains(snakeHead)) return true; //ชนสิ่งกีดขวาง
+    }
     return false;
   }
 
@@ -224,45 +229,80 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
   Future<void> updateSnake(LevelConfig config) async {
     if (isGamePause) return;
 
-    setState(() {
-      switch (direction) {
-        case Direction.up:
-          snakePosition.insert(0, snakeHead - column);
-          break;
-        case Direction.down:
-          snakePosition.insert(0, snakeHead + column);
-          break;
-        case Direction.right:
-          snakePosition.insert(0, snakeHead + 1);
-          break;
-        case Direction.left:
-          snakePosition.insert(0, snakeHead - 1);
-          break;
-      }
-    });
+    // setState(() {
+    //   switch (direction) {
+    //     case Direction.up:
+    //       snakePosition.insert(0, snakeHead - column);
+    //       break;
+    //     case Direction.down:
+    //       snakePosition.insert(0, snakeHead + column);
+    //       break;
+    //     case Direction.right:
+    //       snakePosition.insert(0, snakeHead + 1);
+    //       break;
+    //     case Direction.left:
+    //       snakePosition.insert(0, snakeHead - 1);
+    //       break;
+    //   }
+    // });
 
-    if (snakeHead == foodPosition) {
-      score++;
-      generateFood();
-
-      if (score == config.requiredScore && !hasSavedResult) {
-        hasSavedResult = true;
-        stopwatch.stop();
-        isGamePause = true;
-        await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
-
-        if (widget.levelNumber == 5) {
-          LevelCongratulation.showLevelCongratulationDialog(context);
-        } else {
-          LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, widget.levelNumber, () => goNextLevel(config));
-        }
-      }
-    } else {
-      snakePosition.removeLast();
+    int newHead;
+    switch (direction) {
+      case Direction.up:
+        newHead = snakeHead - column;
+        break;
+      case Direction.down:
+        newHead = snakeHead + column;
+        break;
+      case Direction.right:
+        newHead = snakeHead + 1;
+        break;
+      case Direction.left:
+        newHead = snakeHead - 1;
+        break;
     }
 
-    snakeHead = snakePosition.first;
-    levelSnakePositions[widget.levelNumber] = List.from(snakePosition);
+    //ตรวจสอบก่อนชน
+    if (borderList.contains(newHead) || snakePosition.contains(newHead) || obstacles.contains(newHead)) {
+      setState(() {
+        isGamePause = true;
+      });
+      stopwatch.stop();
+      if (!hasSavedResult) {
+        hasSavedResult = true;
+        await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
+        ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
+      }
+      return; //ไม่อัปเดตหัวงู
+    }
+
+    //ถ้ายังไม่ชน
+    setState(() {
+      snakePosition.insert(0, newHead);
+
+      if (newHead  == foodPosition) {
+        score++;
+        generateFood();
+
+        if (score == config.requiredScore && !hasSavedResult) {
+          hasSavedResult = true;
+          stopwatch.stop();
+          isGamePause = true;
+          savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
+
+          if (widget.levelNumber == 5) {
+            LevelCongratulation.showLevelCongratulationDialog(context);
+          } else {
+            LevelPass.showLevelPassDialog(context, stopwatch.elapsed, restartGame, widget.levelNumber, () => goNextLevel(config));
+          }
+        }
+      } else {
+        snakePosition.removeLast();
+      }
+
+      snakeHead = snakePosition.first;
+      levelSnakePositions[widget.levelNumber] = List.from(snakePosition); //บันทึกตำแหน่งงูที่อัปเดต
+    });
   }
 
   void goNextLevel(LevelConfig config) {
@@ -278,8 +318,6 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
 
   @override
   Widget build(BuildContext context) {
-    final config = levelConfigs[widget.levelNumber]!;
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.lightBlue.shade100,
@@ -405,21 +443,25 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     } else if (obstacles.contains(index)) {
       return Colors.brown; //สิ่งกีดขวาง
     }
-    return Colors.grey.withOpacity(0.3);
+    // return Colors.grey.withOpacity(0.3);
+    return Colors.grey.withValues(alpha: 0.3);
   }
 
   makeBorder(config) {
-    for(int i=0; i<column; i++) { //บน
-      if(!borderList.contains(i)) borderList.add(i);
-    }
-    for(int i=0; i<row*column; i=i+column){ //ซ้าย
-      if(!borderList.contains(i)) borderList.add(i);
-    }
-    for(int i=column-1; i<row*column; i=i+column){ //ขวา
-      if(!borderList.contains(i)) borderList.add(i);
-    }
-    for(int i= (row*column)-column; i<row*column; i=i+1){ //ล่าง
-      if(!borderList.contains(i)) borderList.add(i);
+    if (widget.levelNumber != 1) { //level 1 จะไม่โชว์ขอบ
+      for (int i = 0; i < column; i++) { //บน
+        if (!borderList.contains(i)) borderList.add(i);
+      }
+      for (int i = 0; i < row * column; i = i + column) { //ซ้าย
+        if (!borderList.contains(i)) borderList.add(i);
+      }
+      for (int i = column - 1; i < row * column; i = i + column) { //ขวา
+        if (!borderList.contains(i)) borderList.add(i);
+      }
+      for (int i = (row * column) - column; i < row * column;
+      i = i + 1) { //ล่าง
+        if (!borderList.contains(i)) borderList.add(i);
+      }
     }
   }
 
@@ -444,14 +486,12 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
 
 class LevelConfig {
   final List<int> obstacles;
-  final bool hasBorderCollision;
   final int? nextLevel;
   final int requiredScore;
   final List<int> initialSnakePosition;
 
   LevelConfig({
     required this.obstacles,
-    required this.hasBorderCollision,
     required this.nextLevel,
     required this.requiredScore,
     required this.initialSnakePosition

@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 8),
-            if (bestScore != null)
+            if (bestScore != null) //ซ่อนปุ่ม
               ElevatedButton.icon(
                 onPressed: () => ShowAllScore.showAllScore(context),
                 icon: const Icon(Icons.leaderboard, color: Colors.white),
