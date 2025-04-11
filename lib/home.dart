@@ -4,6 +4,7 @@ import 'package:snake_game/auth/auth_service.dart';
 import 'package:snake_game/widget/show_dialog.dart';
 
 import 'level/level.dart';
+import 'level/survival.dart';
 import 'main.dart';
 
 class HomePage extends StatefulWidget {
@@ -122,24 +123,64 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
             ),
             SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SnakeGameLevel(levelNumber: 1,)),
-                );
-              },
-              icon: const Icon(Icons.play_arrow, color: Colors.white),
-              label: const Text("Start",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green.shade600,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SnakeGameLevel(levelNumber: 1)),
+                    );
+                  },
+                  icon: const Icon(Icons.play_arrow, color: Colors.white),
+                  label: const Text(
+                    "Start",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Silkscreen",
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
                 ),
-                elevation: 4,
-              ),
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    // ตัวอย่าง: เรียกเล่นเกมอีกเลเวลหรือฟีเจอร์อื่น
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SnakeGameSurvival()),
+                    );
+                  },
+                  icon: const Icon(Icons.play_arrow, color: Colors.white),
+                  label: const Text(
+                    "Start Survival",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Silkscreen",
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 8),
             if (bestScore != null) //ซ่อนปุ่ม

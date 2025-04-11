@@ -130,7 +130,6 @@ class ShowAllScore {
   }
 }
 
-
 class ShowGameOver {
   static void showGameOver(BuildContext context, int level, int score, Duration duration, VoidCallback restartGame) {
 
@@ -160,6 +159,77 @@ class ShowGameOver {
                   style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
                   )),
               const SizedBox(height: 10),
+              Text("Score : $score",
+                  style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
+                  )),
+              const SizedBox(height: 10),
+              Text("Time : $minutes:$seconds:$milliseconds",
+                  style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
+                  )),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orangeAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+              child: const Text("Home",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                restartGame();
+              },
+              child: const Text("Restart",
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 16, color: Colors.black),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class ShowGameSurvivalOver {
+  static void showGameSurvivalOver(BuildContext context, int score, Duration duration, VoidCallback restartGame) {
+
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    String milliseconds = twoDigits((duration.inMilliseconds.remainder(1000) ~/ 10));
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          title: const Center(
+            child: Text("💀 Game Over!",
+              style: TextStyle(fontSize: 24, fontFamily: "Silkscreen", fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Text("Score : $score",
                   style: const TextStyle(fontSize: 18, fontFamily: "Silkscreen",
                   )),
