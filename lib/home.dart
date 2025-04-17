@@ -28,11 +28,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   int? bestScore;
+  int? bestSurvivalScore;
 
   @override
   void initState() {
     super.initState();
     fetchBestScore(); //ดึงคะแนนเมื่อโหลดหน้าจอ
+    fetchBestSurvivalScore();
   }
 
   Future<void> fetchBestScore() async {
@@ -57,6 +59,31 @@ class _HomePageState extends State<HomePage> {
       }
     } catch (e) {
       print("เกิดข้อผิดพลาดในการดึงคะแนน: $e");
+    }
+  }
+
+  Future<void> fetchBestSurvivalScore() async {
+    final user = AuthService().getCurrentUser();
+    if (user == null) return;
+
+    final uid = user.uid;
+
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('play_survival_history')
+          .where('uid', isEqualTo: uid)
+          .orderBy('score', descending: true)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final score = querySnapshot.docs.first.data()['score'];
+        setState(() {
+          bestSurvivalScore = score;
+        });
+      }
+    } catch (e) {
+      print("เกิดข้อผิดพลาดในการดึงคะแนน survival: $e");
     }
   }
 
@@ -120,6 +147,10 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 8),
             Text(
               "Best Score: ${bestScore != null ? bestScore.toString() : "0"}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
+            ),
+            Text(
+              "Survival Score: ${bestSurvivalScore != null ? bestSurvivalScore.toString(): "0"}",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
             ),
             SizedBox(height: 8),
@@ -188,6 +219,21 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () => ShowAllScore.showAllScore(context),
                 icon: const Icon(Icons.leaderboard, color: Colors.white),
                 label: const Text("View All Score",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                ),
+              ),
+            if (bestSurvivalScore != null) //ซ่อนปุ่ม
+              ElevatedButton.icon(
+                onPressed: () => ShowSurvivalScore.showSurvivalScore(context),
+                icon: const Icon(Icons.leaderboard, color: Colors.white),
+                label: const Text("View Survival Score",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: "Silkscreen", color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(

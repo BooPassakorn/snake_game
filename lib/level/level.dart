@@ -151,8 +151,8 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
           stopwatch.stop();
           if (!hasSavedResult) {
             hasSavedResult = true;
-            await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
             ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
+            savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
           }
         }
       }
@@ -189,7 +189,11 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
-          ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
+          if (!hasSavedResult) {
+            hasSavedResult = true;
+            ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
+            savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
+          }
         }
       }
     });
@@ -267,17 +271,32 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     }
 
     //ตรวจสอบก่อนชน
+    // if (borderList.contains(newHead) || snakePosition.contains(newHead) || obstacles.contains(newHead)) {
+    //   setState(() {
+    //     isGamePause = true;
+    //   });
+    //   stopwatch.stop();
+    //   if (!hasSavedResult) {
+    //     hasSavedResult = true;
+    //     await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
+    //     ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
+    //   }
+    //   return; //ไม่อัปเดตหัวงู
+    // }
+
     if (borderList.contains(newHead) || snakePosition.contains(newHead) || obstacles.contains(newHead)) {
+      stopwatch.stop();  //หยุดเวลา
       setState(() {
         isGamePause = true;
       });
-      stopwatch.stop();
+
       if (!hasSavedResult) {
         hasSavedResult = true;
-        await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
+        //แสดง GameOver ทันที
         ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
+        savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
       }
-      return; //ไม่อัปเดตหัวงู
+      return;
     }
 
     //ถ้ายังไม่ชน

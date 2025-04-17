@@ -130,6 +130,119 @@ class ShowAllScore {
   }
 }
 
+class ShowSurvivalScore {
+  static void showSurvivalScore(BuildContext context) async {
+    final user = AuthService().getCurrentUser();
+    if (user == null) return;
+
+    final uid = user.uid;
+
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('play_survival_history')
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        _showDialog(context, 0, "00:00:00");
+        return;
+      }
+
+      //หาคะแนนสูงสุดทั้งหมด
+      final allScores = querySnapshot.docs
+          .map((doc) => doc.data()['score'] as int)
+          .toList();
+
+      final highestScore = allScores.reduce(max);
+
+      //คัดเฉพาะที่มีคะแนนสูงสุด
+      final topScoreDocs = querySnapshot.docs
+          .where((doc) => doc.data()['score'] == highestScore)
+          .toList();
+
+      //หาเวลาที่ดีที่สุดจากคะแนนสูงสุด
+      topScoreDocs.sort((a, b) {
+        final timeA = _parseDuration(a.data()['time']);
+        final timeB = _parseDuration(b.data()['time']);
+        return timeA.compareTo(timeB);
+      });
+
+      final bestTime = topScoreDocs.first.data()['time'];
+
+      _showDialog(context, highestScore, bestTime);
+    } catch (e) {
+      print("เกิดข้อผิดพลาด: $e");
+    }
+  }
+
+  static void _showDialog(BuildContext context, int score, String time) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          backgroundColor: Colors.white,
+          title: Column(
+            children: const [
+              Icon(Icons.emoji_events, size: 48, color: Colors.orange),
+              SizedBox(height: 10),
+              Text("Your Survival Best!",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: "Silkscreen", fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Text("🏆 Best Score : $score",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, fontFamily: "Silkscreen",
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text("⏱ Best Time : $time",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, fontFamily: "Silkscreen",
+                ),
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.close),
+              label: const Text("Close"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueGrey.shade700,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 4,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Duration _parseDuration(String timeString) {
+    final parts = timeString.split(':');
+    if (parts.length != 3) return Duration.zero;
+    final minutes = int.tryParse(parts[0]) ?? 0;
+    final seconds = int.tryParse(parts[1]) ?? 0;
+    final milliseconds = int.tryParse(parts[2]) ?? 0;
+    return Duration(minutes: minutes, seconds: seconds, milliseconds: milliseconds * 10);
+  }
+}
 class ShowGameOver {
   static void showGameOver(BuildContext context, int level, int score, Duration duration, VoidCallback restartGame) {
 
