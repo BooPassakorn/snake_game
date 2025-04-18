@@ -37,64 +37,85 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
 
   Map<int, List<int>> levelSnakePositions = {};
 
+  Future<LevelConfig> fetchLevelConfig(int levelNumber) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('levels')
+        .doc('level_$levelNumber')
+        .get();
+
+    final data = snapshot.data();
+
+    if (data == null) {
+      throw Exception('Level data not found for level_$levelNumber');
+    }
+
+    return LevelConfig(
+      obstacles: List<int>.from(data['obstacles'] ?? []),
+      nextLevel: data['nextLevel'],
+      requiredScore: data['requiredScore'],
+      initialSnakePosition:
+      List<int>.from(data['initialSnakePosition'] ?? []),
+    );
+  }
+
   //Level Config
-  final Map<int, LevelConfig> levelConfigs = {
-    1: LevelConfig(
-      obstacles: [],
-      nextLevel: 2,
-      requiredScore: 5,
-      initialSnakePosition: [166, 165, 164],
-    ),
-    2: LevelConfig(
-      obstacles: [],
-      nextLevel: 3,
-      requiredScore: 10,
-      initialSnakePosition: [166, 165, 164],
-    ),
-    3: LevelConfig(
-      obstacles: [63, 64, 65, 83, 103,
-        74, 75, 76, 96, 116,
-        283, 303, 323, 324, 325,
-        334, 335, 296, 316, 336],
-      nextLevel: 4,
-      requiredScore: 12,
-      initialSnakePosition: [166, 165, 164],
-    ),
-    4: LevelConfig(
-      obstacles: [63, 64, 65, 83, 103,
-        74, 75, 76, 96, 116,
-        283, 303, 323, 324, 325,
-        334, 335, 296, 316, 336,
-        170, 150, 190, 210, 230, 250,
-        191, 192, 193, 189, 188, 187],
-      nextLevel: 5,
-      requiredScore: 15,
-      initialSnakePosition: [166, 165, 164],
-    ),
-    5: LevelConfig(
-      obstacles: [43, 44, 45, 46, 47, 48,
-        51, 71, 91, 111, 131, 151, 152, 153, 154, 155, 156,
-        148, 147, 146, 145, 144, 143, 168, 188, 208, 228, 248,
-        192, 193, 194, 195, 196,
-        231, 251, 271,
-        308, 328, 348, 307, 306, 305, 304, 303, 309, 310, 311, 312, 313],
-      nextLevel: 6,
-      requiredScore: 17,
-      initialSnakePosition: [285,284,283],
-    ),
-    6: LevelConfig(
-      obstacles: [350, 330, 310, 290, 270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50,
-        349, 329, 309, 289, 269, 249, 229, 209, 189, 169, 149, 129, 109, 89, 69, 49,
-        91, 92, 93, 94, 95, 96, 89, 88, 87, 86, 85, 84, 83,
-        151, 152, 153, 154, 155, 156, 149, 148, 147, 146, 145, 144, 143,
-        211, 212, 213, 214, 215, 216, 209, 208, 207, 206, 205, 204, 203,
-        271, 272, 273, 274, 275, 276, 269, 268, 267, 266, 265, 264, 263,
-        331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323],
-      nextLevel: null, //ไม่มี Level ต่อไป
-      requiredScore: 20,
-      initialSnakePosition: [365,364,363],
-    ),
-  };
+  // final Map<int, LevelConfig> levelConfigs = {
+  //   1: LevelConfig(
+  //     obstacles: [],
+  //     nextLevel: 2,
+  //     requiredScore: 5,
+  //     initialSnakePosition: [166, 165, 164],
+  //   ),
+  //   2: LevelConfig(
+  //     obstacles: [],
+  //     nextLevel: 3,
+  //     requiredScore: 10,
+  //     initialSnakePosition: [166, 165, 164],
+  //   ),
+  //   3: LevelConfig(
+  //     obstacles: [63, 64, 65, 83, 103,
+  //       74, 75, 76, 96, 116,
+  //       283, 303, 323, 324, 325,
+  //       334, 335, 296, 316, 336],
+  //     nextLevel: 4,
+  //     requiredScore: 12,
+  //     initialSnakePosition: [166, 165, 164],
+  //   ),
+  //   4: LevelConfig(
+  //     obstacles: [63, 64, 65, 83, 103,
+  //       74, 75, 76, 96, 116,
+  //       283, 303, 323, 324, 325,
+  //       334, 335, 296, 316, 336,
+  //       170, 150, 190, 210, 230, 250,
+  //       191, 192, 193, 189, 188, 187],
+  //     nextLevel: 5,
+  //     requiredScore: 15,
+  //     initialSnakePosition: [166, 165, 164],
+  //   ),
+  //   5: LevelConfig(
+  //     obstacles: [43, 44, 45, 46, 47, 48,
+  //       51, 71, 91, 111, 131, 151, 152, 153, 154, 155, 156,
+  //       148, 147, 146, 145, 144, 143, 168, 188, 208, 228, 248,
+  //       192, 193, 194, 195, 196,
+  //       231, 251, 271,
+  //       308, 328, 348, 307, 306, 305, 304, 303, 309, 310, 311, 312, 313],
+  //     nextLevel: 6,
+  //     requiredScore: 17,
+  //     initialSnakePosition: [285,284,283],
+  //   ),
+  //   6: LevelConfig(
+  //     obstacles: [350, 330, 310, 290, 270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50,
+  //       349, 329, 309, 289, 269, 249, 229, 209, 189, 169, 149, 129, 109, 89, 69, 49,
+  //       91, 92, 93, 94, 95, 96, 89, 88, 87, 86, 85, 84, 83,
+  //       151, 152, 153, 154, 155, 156, 149, 148, 147, 146, 145, 144, 143,
+  //       211, 212, 213, 214, 215, 216, 209, 208, 207, 206, 205, 204, 203,
+  //       271, 272, 273, 274, 275, 276, 269, 268, 267, 266, 265, 264, 263,
+  //       331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323],
+  //     nextLevel: null, //ไม่มี Level ต่อไป
+  //     requiredScore: 20,
+  //     initialSnakePosition: [365,364,363],
+  //   ),
+  // };
 
   @override
   void initState() {
@@ -116,12 +137,16 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     });
   }
 
-  void startGame() {
-    final config = levelConfigs[widget.levelNumber]!;
+  Future<void> startGame() async {
+    final config = await fetchLevelConfig(widget.levelNumber);
 
     setState(() {
       score = 0;
       isGamePause = false;
+      obstacles = config.obstacles;
+      snakePosition = List.from(config.initialSnakePosition);
+      snakeHead = snakePosition.first;
+      levelSnakePositions[widget.levelNumber] = List.from(snakePosition);
     });
 
     stopwatch.reset();
@@ -130,7 +155,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     uiTimer?.cancel();
     startTimer();
 
-    makeBorder(config);
+    makeBorder();
     obstacles = config.obstacles;
     generateFood();
 
@@ -171,7 +196,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     PauseDialog.showPauseDialog(context, restartGame, playContinueGame);
   }
 
-  void playContinueGame() {
+  Future<void> playContinueGame() async {
     setState(() {
       isGamePause = false;
     });
@@ -179,13 +204,15 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     stopwatch.start();
     startTimer(resetStopwatch: false);
 
+    final config = await fetchLevelConfig(widget.levelNumber);
+
     //งูเดินต่อ
     snakeTimer?.cancel();
     snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
       if (isGamePause) {
         timer.cancel();
       } else {
-        updateSnake(levelConfigs[widget.levelNumber]!);
+        updateSnake(config);
         if (checkCollision()) {
           timer.cancel();
           stopwatch.stop();
@@ -470,7 +497,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     return Colors.grey.withValues(alpha: 0.3);
   }
 
-  makeBorder(config) {
+  makeBorder() {
     if (widget.levelNumber != 1) { //level 1 จะไม่โชว์ขอบ
       for (int i = 0; i < column; i++) { //บน
         if (!borderList.contains(i)) borderList.add(i);
