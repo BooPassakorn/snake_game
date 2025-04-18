@@ -35,10 +35,35 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
 
   int snakeSpeed = 300; //เริ่มต้น 300 milliseconds
   int lastSpeedUpAt = 0; //บันทึกว่าวินาทีไหนเราปรับความเร็วครั้งล่าสุด
+  int? speedUpInterval;
+  int? minSpeed;
+  int? speedDecreaseStep;
+
+  Future<void> Config() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('game_config')
+          .doc('survival_mode')
+          .get();
+
+      if (snapshot.exists) {
+        final data = snapshot.data()!;
+        setState(() {
+          speedUpInterval = data['speed_up_interval'] ?? 30;
+          snakeSpeed = data['initial_speed'] ?? 300;
+          minSpeed = data['min_speed'] ?? 100;
+          speedDecreaseStep = data['speed_decrease_step'] ?? 10;
+        });
+      }
+    } catch (e) {
+      print("โหลด config ไม่สำเร็จ: $e");
+    }
+  }
 
   @override
   void initState() {
-    startGame();
+    Config().then((_) => startGame());
+    generateFood();
     super.initState();
   }
 
@@ -79,7 +104,7 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
     snakeHead = snakePosition.first;
 
     snakeTimer?.cancel();
-    snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
+    snakeTimer = Timer.periodic(Duration(milliseconds: snakeSpeed), (timer) async {
       if (isGamePause) {
         timer.cancel();
       } else {
@@ -110,7 +135,7 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
 
     //งูเดินต่อ
     snakeTimer?.cancel();
-    snakeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
+    snakeTimer = Timer.periodic(Duration(milliseconds: snakeSpeed), (timer) async {
       if (isGamePause) {
         timer.cancel();
       } else {
@@ -157,9 +182,9 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
     int secondsElapsed = stopwatch.elapsed.inSeconds;
 
     //ถ้าผ่านไปทีละ 30 วินาที
-    if (secondsElapsed - lastSpeedUpAt >= 30) {
-      if (snakeSpeed > 100) { //จำกัดความเร็วไม่ให้เร็วเกินไป
-        snakeSpeed -= 10;
+    if (secondsElapsed - lastSpeedUpAt >= speedUpInterval!) {
+      if (snakeSpeed > minSpeed!) {
+        snakeSpeed -= speedDecreaseStep!;
         lastSpeedUpAt = secondsElapsed;
 
         //รีสตาร์ท snakeTimer ด้วยความเร็วใหม่

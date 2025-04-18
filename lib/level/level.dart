@@ -26,7 +26,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
   int snakeHead = 0;
   int score = 0;
   late Direction direction;
-  late int foodPosition;
+  int? foodPosition;
   Stopwatch stopwatch = Stopwatch();
   Timer? timer;
   bool isGamePause = false;
@@ -58,69 +58,13 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     );
   }
 
-  //Level Config
-  // final Map<int, LevelConfig> levelConfigs = {
-  //   1: LevelConfig(
-  //     obstacles: [],
-  //     nextLevel: 2,
-  //     requiredScore: 5,
-  //     initialSnakePosition: [166, 165, 164],
-  //   ),
-  //   2: LevelConfig(
-  //     obstacles: [],
-  //     nextLevel: 3,
-  //     requiredScore: 10,
-  //     initialSnakePosition: [166, 165, 164],
-  //   ),
-  //   3: LevelConfig(
-  //     obstacles: [63, 64, 65, 83, 103,
-  //       74, 75, 76, 96, 116,
-  //       283, 303, 323, 324, 325,
-  //       334, 335, 296, 316, 336],
-  //     nextLevel: 4,
-  //     requiredScore: 12,
-  //     initialSnakePosition: [166, 165, 164],
-  //   ),
-  //   4: LevelConfig(
-  //     obstacles: [63, 64, 65, 83, 103,
-  //       74, 75, 76, 96, 116,
-  //       283, 303, 323, 324, 325,
-  //       334, 335, 296, 316, 336,
-  //       170, 150, 190, 210, 230, 250,
-  //       191, 192, 193, 189, 188, 187],
-  //     nextLevel: 5,
-  //     requiredScore: 15,
-  //     initialSnakePosition: [166, 165, 164],
-  //   ),
-  //   5: LevelConfig(
-  //     obstacles: [43, 44, 45, 46, 47, 48,
-  //       51, 71, 91, 111, 131, 151, 152, 153, 154, 155, 156,
-  //       148, 147, 146, 145, 144, 143, 168, 188, 208, 228, 248,
-  //       192, 193, 194, 195, 196,
-  //       231, 251, 271,
-  //       308, 328, 348, 307, 306, 305, 304, 303, 309, 310, 311, 312, 313],
-  //     nextLevel: 6,
-  //     requiredScore: 17,
-  //     initialSnakePosition: [285,284,283],
-  //   ),
-  //   6: LevelConfig(
-  //     obstacles: [350, 330, 310, 290, 270, 250, 230, 210, 190, 170, 150, 130, 110, 90, 70, 50,
-  //       349, 329, 309, 289, 269, 249, 229, 209, 189, 169, 149, 129, 109, 89, 69, 49,
-  //       91, 92, 93, 94, 95, 96, 89, 88, 87, 86, 85, 84, 83,
-  //       151, 152, 153, 154, 155, 156, 149, 148, 147, 146, 145, 144, 143,
-  //       211, 212, 213, 214, 215, 216, 209, 208, 207, 206, 205, 204, 203,
-  //       271, 272, 273, 274, 275, 276, 269, 268, 267, 266, 265, 264, 263,
-  //       331, 332, 333, 334, 335, 336, 329, 328, 327, 326, 325, 324, 323],
-  //     nextLevel: null, //ไม่มี Level ต่อไป
-  //     requiredScore: 20,
-  //     initialSnakePosition: [365,364,363],
-  //   ),
-  // };
-
   @override
   void initState() {
     super.initState();
-    startGame();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startGame();
+      generateFood();
+    });
   }
 
   void startTimer({bool resetStopwatch = true}) { //ถ้าได้(Restart) true จะรีเซ็ตเวลา, ได้(Go) false จะไม่รีเซ็ตเวลา
@@ -160,7 +104,7 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     generateFood();
 
     direction = Direction.right;
-    snakePosition = List.from(config.initialSnakePosition);
+    // snakePosition = List.from(config.initialSnakePosition);
     snakeHead = snakePosition.first;
 
     levelSnakePositions[widget.levelNumber] = List.from(snakePosition); //บันทึกตำแหน่งงูที่ level นี้
@@ -252,30 +196,13 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
     int newFoodPos;
     do {
       newFoodPos = Random().nextInt(row * column);
-    } while (borderList.contains(newFoodPos) || obstacles.contains(newFoodPos));
+    } while (borderList.contains(newFoodPos) || obstacles.contains(newFoodPos) || snakePosition.contains(newFoodPos));
 
     foodPosition = newFoodPos;
   }
 
   Future<void> updateSnake(LevelConfig config) async {
     if (isGamePause) return;
-
-    // setState(() {
-    //   switch (direction) {
-    //     case Direction.up:
-    //       snakePosition.insert(0, snakeHead - column);
-    //       break;
-    //     case Direction.down:
-    //       snakePosition.insert(0, snakeHead + column);
-    //       break;
-    //     case Direction.right:
-    //       snakePosition.insert(0, snakeHead + 1);
-    //       break;
-    //     case Direction.left:
-    //       snakePosition.insert(0, snakeHead - 1);
-    //       break;
-    //   }
-    // });
 
     int newHead;
     switch (direction) {
@@ -296,20 +223,6 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
         if (widget.levelNumber == 1 && snakeHead % column == 0) newHead = snakeHead + (column - 1); //ทะลุซ้าย ไป ขวา
         break;
     }
-
-    //ตรวจสอบก่อนชน
-    // if (borderList.contains(newHead) || snakePosition.contains(newHead) || obstacles.contains(newHead)) {
-    //   setState(() {
-    //     isGamePause = true;
-    //   });
-    //   stopwatch.stop();
-    //   if (!hasSavedResult) {
-    //     hasSavedResult = true;
-    //     await savePlayResult(score, stopwatch.elapsed, widget.levelNumber);
-    //     ShowGameOver.showGameOver(context, widget.levelNumber, score, stopwatch.elapsed, restartGame);
-    //   }
-    //   return; //ไม่อัปเดตหัวงู
-    // }
 
     if (borderList.contains(newHead) || snakePosition.contains(newHead) || obstacles.contains(newHead)) {
       stopwatch.stop();  //หยุดเวลา
@@ -488,16 +401,16 @@ class _SnakeGameLevelState extends State<SnakeGameLevel> {
       } else {
         return Colors.green.shade400; //ตัวงู
       }
-    } else if (index == foodPosition) {
+    } else if (foodPosition != null && index == foodPosition) {
       return Colors.redAccent; //อาหาร
     } else if (obstacles.contains(index)) {
       return Colors.brown; //สิ่งกีดขวาง
     }
-    // return Colors.grey.withOpacity(0.3);
     return Colors.grey.withValues(alpha: 0.3);
   }
 
   makeBorder() {
+    borderList.clear();
     if (widget.levelNumber != 1) { //level 1 จะไม่โชว์ขอบ
       for (int i = 0; i < column; i++) { //บน
         if (!borderList.contains(i)) borderList.add(i);
