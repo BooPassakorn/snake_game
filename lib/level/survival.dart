@@ -116,12 +116,13 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
       } else {
         updateSnake();
         if (checkCollision()) {
+          final gameOverTime = stopwatch.elapsed;
           timer.cancel();
           stopwatch.stop();
           if (!hasSavedResult) {
             hasSavedResult = true;
-            await savePlaySurvivalResult(score, stopwatch.elapsed);
-            ShowGameSurvivalOver.showGameSurvivalOver(context, score, stopwatch.elapsed, restartGame);
+            ShowGameSurvivalOver.showGameSurvivalOver(context, score, gameOverTime, restartGame);
+            unawaited(savePlaySurvivalResult(score, gameOverTime));
           }
         }
       }
@@ -169,12 +170,13 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
           } else {
             updateSnake();
             if (checkCollision()) {
+              final gameOverTime = stopwatch.elapsed;
               timer.cancel();
               stopwatch.stop();
               if (!hasSavedResult) {
                 hasSavedResult = true;
-                await savePlaySurvivalResult(score, stopwatch.elapsed);
-                ShowGameSurvivalOver.showGameSurvivalOver(context, score, stopwatch.elapsed, restartGame);
+                ShowGameSurvivalOver.showGameSurvivalOver(context, score, gameOverTime, restartGame);
+                unawaited(savePlaySurvivalResult(score, gameOverTime));
               }
             }
           }
@@ -200,15 +202,17 @@ class _SnakeGameSurvivalState extends State<SnakeGameSurvival> {
 
     // ตรวจชนก่อนอัปเดต
     if (borderList.contains(newHead) || snakePosition.contains(newHead)) {
+      final gameOverTime = stopwatch.elapsed;
+      stopwatch.stop();
+
       setState(() {
         isGamePause = true;
       });
-      stopwatch.stop();
+
       if (!hasSavedResult) {
         hasSavedResult = true;
-        await savePlaySurvivalResult(score, stopwatch.elapsed);
-        ShowGameSurvivalOver.showGameSurvivalOver(context, score, stopwatch.elapsed, restartGame,
-        );
+        ShowGameSurvivalOver.showGameSurvivalOver(context, score, gameOverTime, restartGame);
+        unawaited(savePlaySurvivalResult(score, gameOverTime));
       }
       return;
     }
