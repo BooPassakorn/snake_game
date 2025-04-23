@@ -104,7 +104,7 @@ class ShowAllScore {
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.close),
-              label: const Text("Close"),
+              label: const Text("Close", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, fontFamily: "Silkscreen")),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueGrey.shade700,
                 foregroundColor: Colors.white,
@@ -218,7 +218,7 @@ class ShowSurvivalScore {
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.close),
-              label: const Text("Close"),
+              label: const Text("Close", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, fontFamily: "Silkscreen")),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueGrey.shade700,
                 foregroundColor: Colors.white,
