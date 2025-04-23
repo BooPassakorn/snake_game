@@ -145,10 +145,12 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
             ),
             SizedBox(height: 8),
+            if (bestScore != null)
             Text(
               "Best Score: ${bestScore != null ? bestScore.toString() : "0"}",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
             ),
+            if (bestSurvivalScore != null)
             Text(
               "Survival Score: ${bestSurvivalScore != null ? bestSurvivalScore.toString(): "0"}",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Silkscreen"),
